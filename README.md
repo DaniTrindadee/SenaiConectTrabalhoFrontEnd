@@ -342,7 +342,7 @@ Abra o arquivo **index.html** em seu navegador.
 
 ---
 
-## Miguel Tavares
+## Myguel Tavares
 
 <a href="https://github.com/SEU-USUARIO">
   <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white"/>
