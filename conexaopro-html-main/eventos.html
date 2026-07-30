@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventos | Senai Connect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        /* ===== RESET ===== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0a0e27;
+            color: #b8c0d8;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+        a { text-decoration: none; color: inherit; }
+
+        /* ===== HEADER ===== */
+        .topo {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 12px 28px;
+            background: #0d1130;
+            border-bottom: 1px solid rgba(108, 140, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .marca {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .marca .Logo img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .marca strong {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .pesquisa {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            max-width: 520px;
+            background: #111638;
+            border: 1px solid rgba(108, 140, 255, 0.15);
+            border-radius: 12px;
+            padding: 10px 16px;
+            color: #6b7294;
+            font-size: 0.88rem;
+        }
+        .pesquisa i { color: #6b7294; }
+        .pesquisa input {
+            background: none;
+            border: none;
+            outline: none;
+            color: #b8c0d8;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.88rem;
+            width: 100%;
+        }
+        .pesquisa input::placeholder { color: #505a80; }
+        .acoes-topo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-left: auto;
+        }
+        .acoes-topo button {
+            background: none;
+            border: 1px solid rgba(108, 140, 255, 0.15);
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #b8c0d8;
+            cursor: pointer;
+            font-size: 0.95rem;
+            position: relative;
+            transition: background 0.2s;
+        }
+        .acoes-topo button:hover { background: rgba(108, 140, 255, 0.08); }
+        .acoes-topo button a { color: #b8c0d8; }
+        .notificacao {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #6c8cff;
+            color: #fff;
+            font-size: 0.6rem;
+            font-weight: 600;
+            padding: 2px 5px;
+            border-radius: 8px;
+            min-width: 16px;
+            text-align: center;
+        }
+        .perfil-topo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 20px;
+            padding: 4px 12px 4px 4px;
+            background: #111638;
+            border: 1px solid rgba(108, 140, 255, 0.15) !important;
+            width: auto !important;
+        }
+        .avatar.mini {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #6c8cff;
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .perfil-topo span:last-child {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #e0e4f0;
+        }
+        .sair {
+            background: none !important;
+            border: none !important;
+            border-radius: 8px !important;
+            width: auto !important;
+            padding: 8px 14px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: #b8c0d8;
+            cursor: pointer;
+        }
+        .sair:hover { color: #fff; }
+
+        /* ===== LAYOUT PRINCIPAL ===== */
+        .painel {
+            display: grid;
+            grid-template-columns: 260px 1fr 320px;
+            gap: 24px;
+            padding: 24px 28px;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        /* ===== SIDEBAR ESQUERDA ===== */
+        .menu-lateral {
+            background: #0d1130;
+            border: 1px solid rgba(108, 140, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px 20px;
+            height: fit-content;
+            position: sticky;
+            top: 80px;
+        }
+        .perfil-resumo {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(108, 140, 255, 0.1);
+        }
+        .avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+        .perfil-resumo .avatar {
+            background: linear-gradient(135deg, #6c8cff, #4a6cf7);
+        }
+        .perfil-resumo strong {
+            display: block;
+            font-size: 0.95rem;
+            color: #e0e4f0;
+            margin-bottom: 2px;
+        }
+        .perfil-resumo span {
+            font-size: 0.78rem;
+            color: #6b7294;
+        }
+        .perfil-resumo button {
+            display: block;
+            margin: 12px auto 0;
+            background: none;
+            border: 1px solid rgba(108, 140, 255, 0.25);
+            color: #6c8cff;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .perfil-resumo button:hover { background: rgba(108, 140, 255, 0.08); }
+        .nivel-resumo {
+            margin-top: 16px;
+        }
+        .nivel-resumo > div:first-child {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            margin-bottom: 6px;
+        }
+        .nivel-resumo span { color: #6b7294; }
+        .nivel-resumo span b { color: #e0e4f0; }
+        .nivel-resumo small { color: #6b7294; }
+        .barra-nivel {
+            height: 4px;
+            background: rgba(108, 140, 255, 0.15);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .barra-nivel span {
+            display: block;
+            height: 100%;
+            background: #6c8cff;
+            border-radius: 4px;
+        }
+
+        /* Nav */
+        .menu-lateral nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 20px;
+        }
+        .menu-lateral nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            color: #8a92b0;
+            transition: all 0.2s;
+        }
+        .menu-lateral nav a:hover {
+            background: rgba(108, 140, 255, 0.06);
+            color: #e0e4f0;
+        }
+        .menu-lateral nav a.ativo {
+            background: rgba(108, 140, 255, 0.12);
+            color: #6c8cff;
+            font-weight: 500;
+        }
+        .menu-lateral nav a i {
+            width: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        .menu-rodape {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .menu-rodape a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            color: #6b7294;
+            transition: all 0.2s;
+        }
+        .menu-rodape a:hover {
+            background: rgba(108, 140, 255, 0.06);
+            color: #b8c0d8;
+        }
+
+        /* ===== FEED / CONTEÚDO PRINCIPAL ===== */
+        .feed {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Hero */
+        .hero-eventos {
+            background: linear-gradient(135deg, #0f1640 0%, #162060 60%, #1a2a70 100%);
+            border: 1px solid rgba(108, 140, 255, 0.15);
+            border-radius: 16px;
+            padding: 32px 36px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-eventos::after {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 200px;
+            height: 200px;
+            background: rgba(108, 140, 255, 0.06);
+            border-radius: 50%;
+        }
+        .hero-eventos::before {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            right: 140px;
+            width: 140px;
+            height: 140px;
+            background: rgba(108, 140, 255, 0.04);
+            border-radius: 50%;
+        }
+        .hero-eventos .eyebrow {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #6c8cff;
+            margin-bottom: 8px;
+        }
+        .hero-eventos h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .hero-eventos p {
+            font-size: 0.9rem;
+            color: #8a92b0;
+            max-width: 500px;
+        }
+        .hero-eventos .icon-hero {
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 4.5rem;
+            color: rgba(108, 140, 255, 0.12);
+        }
+
+        /* Tabs */
+        .tabs-eventos {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .tab-evento {
+            padding: 7px 18px;
+            border-radius: 20px;
+            border: 1px solid rgba(108, 140, 255, 0.15);
+            background: transparent;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #8a92b0;
+        }
+        .tab-evento:hover {
+            border-color: #6c8cff;
+            color: #c0c8e8;
+        }
+        .tab-evento.ativo {
+            background: #6c8cff;
+            color: #fff;
+            border-color: #6c8cff;
+        }
+
+        /* Grid de eventos */
+        .grid-eventos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 18px;
+        }
+
+        /* Card evento */
+        .card-evento {
+            background: #111638;
+            border: 1px solid rgba(108, 140, 255, 0.12);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: all 0.25s;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        .card-evento:hover {
+            border-color: rgba(108, 140, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(108, 140, 255, 0.08);
+        }
+
+        .evento-capa {
+            height: 150px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            padding: 14px 16px;
+        }
+        .evento-capa::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(transparent 30%, rgba(10, 14, 39, 0.7));
+        }
+        .evento-capa .data-badge {
+            position: relative;
+            z-index: 1;
+            background: rgba(17, 22, 56, 0.9);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(108, 140, 255, 0.2);
+            border-radius: 10px;
+            padding: 8px 12px;
+            text-align: center;
+            line-height: 1;
+        }
+        .evento-capa .data-badge strong {
+            display: block;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+        .evento-capa .data-badge small {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            color: #6c8cff;
+            letter-spacing: 0.5px;
+        }
+
+        .evento-tag {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 1;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .tag-apresentacao { background: rgba(46, 125, 50, 0.2); color: #66bb6a; border: 1px solid rgba(46, 125, 50, 0.3); }
+        .tag-oficina { background: rgba(21, 101, 192, 0.2); color: #42a5f5; border: 1px solid rgba(21, 101, 192, 0.3); }
+        .tag-institucional { background: rgba(230, 81, 0, 0.2); color: #ffa726; border: 1px solid rgba(230, 81, 0, 0.3); }
+        .tag-hackathon { background: rgba(123, 31, 162, 0.2); color: #ce93d8; border: 1px solid rgba(123, 31, 162, 0.3); }
+        .tag-workshop { background: rgba(198, 40, 40, 0.2); color: #ef5350; border: 1px solid rgba(198, 40, 40, 0.3); }
+        .tag-palestra { background: rgba(0, 105, 92, 0.2); color: #4db6ac; border: 1px solid rgba(0, 105, 92, 0.3); }
+        .tag-exibicao { background: rgba(69, 39, 160, 0.2); color: #b39ddb; border: 1px solid rgba(69, 39, 160, 0.3); }
+
+        .evento-corpo {
+            padding: 16px 18px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .evento-corpo h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #e0e4f0;
+            margin-bottom: 6px;
+        }
+        .evento-corpo p {
+            font-size: 0.8rem;
+            color: #6b7294;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            flex: 1;
+        }
+
+        .evento-meta {
+            display: flex;
+            gap: 14px;
+            font-size: 0.75rem;
+            color: #505a80;
+            padding-top: 10px;
+            border-top: 1px solid rgba(108, 140, 255, 0.08);
+            flex-wrap: wrap;
+        }
+        .evento-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .evento-meta i {
+            color: #6c8cff;
+            font-size: 0.78rem;
+        }
+
+        .evento-rodape {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 18px;
+            border-top: 1px solid rgba(108, 140, 255, 0.08);
+        }
+        .evento-rodape .vagas {
+            font-size: 0.78rem;
+            color: #505a80;
+        }
+        .evento-rodape .vagas strong {
+            color: #66bb6a;
+        }
+        .btn-participar {
+            padding: 7px 18px;
+            border-radius: 20px;
+            border: none;
+            background: #6c8cff;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-participar:hover {
+            background: #5a7aef;
+        }
+        .btn-participar.confirmado {
+            background: rgba(46, 125, 50, 0.2);
+            color: #66bb6a;
+            border: 1px solid rgba(46, 125, 50, 0.3);
+        }
+
+        /* Seção apresentações */
+        .secao-apresentacoes {
+            margin-top: 8px;
+        }
+        .secao-apresentacoes h2 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #e0e4f0;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .secao-apresentacoes h2 i {
+            color: #6c8cff;
+        }
+
+        .card-apresentacao {
+            background: #111638;
+            border: 1px solid rgba(108, 140, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            transition: all 0.2s;
+        }
+        .card-apresentacao:hover {
+            border-color: rgba(108, 140, 255, 0.25);
+            transform: translateX(3px);
+        }
+        .apresentacao-data {
+            min-width: 56px;
+            text-align: center;
+            background: rgba(108, 140, 255, 0.08);
+            border: 1px solid rgba(108, 140, 255, 0.12);
+            border-radius: 10px;
+            padding: 10px 8px;
+        }
+        .apresentacao-data strong {
+            display: block;
+            font-size: 1.15rem;
+            color: #e0e4f0;
+        }
+        .apresentacao-data small {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            color: #6c8cff;
+        }
+        .apresentacao-info h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #e0e4f0;
+            margin-bottom: 4px;
+        }
+        .apresentacao-info p {
+            font-size: 0.8rem;
+            color: #6b7294;
+            line-height: 1.45;
+        }
+        .apresentacao-info .turma-badge {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 3px 10px;
+            background: rgba(108, 140, 255, 0.1);
+            color: #6c8cff;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        /* ===== SIDEBAR DIREITA ===== */
+        .lateral-direita {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        /* Card lateral genérico */
+        .card-lateral {
+            background: #111638;
+            border: 1px solid rgba(108, 140, 255, 0.1);
+            border-radius: 14px;
+            padding: 20px;
+        }
+        .titulo-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .titulo-card h2 {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #e0e4f0;
+        }
+        .titulo-card a {
+            font-size: 0.75rem;
+            color: #6c8cff;
+            font-weight: 500;
+        }
+        .titulo-card a:hover { text-decoration: underline; }
+
+        /* Calendário mini */
+        .calendario-mini {
+            background: #111638;
+            border: 1px solid rgba(108, 140, 255, 0.1);
+            border-radius: 14px;
+            padding: 20px;
+        }
+        .calendario-mini h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #e0e4f0;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .calendario-mini h3 i { color: #6c8cff; }
+        .mes-navegacao {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .mes-navegacao button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6c8cff;
+            font-size: 0.85rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        .mes-navegacao button:hover { background: rgba(108, 140, 255, 0.1); }
+        .mes-navegacao strong {
+            font-size: 0.85rem;
+            color: #e0e4f0;
+        }
+        .dias-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            text-align: center;
+        }
+        .dias-grid .dia-header {
+            font-size: 0.62rem;
+            font-weight: 600;
+            color: #505a80;
+            text-transform: uppercase;
+            padding: 4px 0;
+            letter-spacing: 0.5px;
+        }
+        .dias-grid .dia {
+            font-size: 0.75rem;
+            padding: 6px 0;
+            border-radius: 50%;
+            cursor: pointer;
+            color: #8a92b0;
+        }
+        .dias-grid .dia:hover {
+            background: rgba(108, 140, 255, 0.1);
+        }
+        .dias-grid .dia.tenha-evento {
+            background: #6c8cff;
+            color: #fff;
+            font-weight: 600;
+        }
+        .dias-grid .dia.hoje {
+            border: 2px solid #6c8cff;
+            font-weight: 600;
+        }
+
+        /* Timeline */
+        .timeline-eventos {
+            position: relative;
+            padding-left: 20px;
+        }
+        .timeline-eventos::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(108, 140, 255, 0.1);
+        }
+        .timeline-item {
+            position: relative;
+            padding-bottom: 16px;
+        }
+        .timeline-item:last-child { padding-bottom: 0; }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -18px;
+            top: 5px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #6c8cff;
+            border: 2px solid #111638;
+        }
+        .timeline-item .t-dia {
+            font-size: 0.72rem;
+            color: #505a80;
+            margin-bottom: 3px;
+        }
+        .timeline-item h4 {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #e0e4f0;
+            margin-bottom: 2px;
+        }
+        .timeline-item small {
+            font-size: 0.72rem;
+            color: #505a80;
+        }
+
+        /* Stats */
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(108, 140, 255, 0.08);
+            font-size: 0.8rem;
+        }
+        .stats-row:last-child { border-bottom: none; }
+        .stats-row span:first-child { color: #6b7294; }
+        .stats-row strong { color: #6c8cff; font-size: 0.9rem; }
+
+        /* ===== MODAL ===== */
+        .modal-evento {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(5, 8, 20, 0.8);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-evento.aberto { display: flex; }
+        .modal-evento-conteudo {
+            background: #111638;
+            border: 1px solid rgba(108, 140, 255, 0.15);
+            border-radius: 16px;
+            max-width: 540px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        .modal-evento-capa {
+            height: 170px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 16px 16px 0 0;
+            position: relative;
+        }
+        .modal-evento-capa::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(transparent 40%, rgba(10, 14, 39, 0.6));
+            border-radius: 16px 16px 0 0;
+        }
+        .modal-evento-corpo { padding: 24px; }
+        .modal-evento-corpo h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #e0e4f0;
+            margin-bottom: 10px;
+        }
+        .modal-evento-corpo .meta-detalhe {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            font-size: 0.78rem;
+            color: #6b7294;
+            margin-bottom: 14px;
+        }
+        .modal-evento-corpo .meta-detalhe span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .modal-evento-corpo .meta-detalhe i { color: #6c8cff; }
+        .modal-evento-corpo .descricao {
+            font-size: 0.85rem;
+            color: #8a92b0;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+        .modal-evento-corpo .programacao h4 {
+            font-size: 0.88rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #e0e4f0;
+        }
+        .programa-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(108, 140, 255, 0.06);
+            font-size: 0.8rem;
+        }
+        .programa-item .hora {
+            min-width: 50px;
+            font-weight: 600;
+            color: #6c8cff;
+        }
+        .programa-item span:last-child { color: #8a92b0; }
+        .modal-fechar {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(10, 14, 39, 0.7);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(108, 140, 255, 0.2);
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #b8c0d8;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1a2a70;
+            border: 1px solid rgba(108, 140, 255, 0.3);
+            color: #e0e4f0;
+            padding: 14px 22px;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            z-index: 10000;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            transition: opacity 0.3s;
+        }
+
+        /* ===== RESPONSIVO ===== */
+        @media (max-width: 1100px) {
+            .painel { grid-template-columns: 220px 1fr; }
+            .lateral-direita { display: none; }
+        }
+        @media (max-width: 768px) {
+            .painel { grid-template-columns: 1fr; padding: 12px; }
+            .menu-lateral { display: none; }
+            .grid-eventos { grid-template-columns: 1fr; }
+            .hero-eventos { padding: 24px 20px; }
+            .hero-eventos .icon-hero { display: none; }
+            .tabs-eventos { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+            .tab-evento { white-space: nowrap; }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="topo">
+        <a class="marca" href="interno.html" aria-label="Página inicial do Senai Connect">
+            <span class="Logo">
+                <img src="https://i.ibb.co/xqQp0Z7V/Chat-GPT-Image-30-de-jul-de-2026-11-08-57.png" alt="Logo">
+            </span>
+            <strong>Senai Connect</strong>
+        </a>
+
+        <label class="pesquisa" for="busca">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="busca" type="search" placeholder="Pesquisar eventos, oficinas e palestras">
+        </label>
+
+        <div class="acoes-topo">
+            <button id="abrir-mensagens" type="button" aria-label="Mensagens"><a href="mensagens.html"><i
+                        class="fa-regular fa-comment-dots"></i></a></button>
+            <button id="abrir-notificacoes" type="button" aria-label="Notificações"><i
+                    class="fa-regular fa-bell"></i><span id="contador-notificacoes"
+                    class="notificacao">3</span></button>
+            <button id="perfil-topo" class="perfil-topo" type="button" onclick="window.location.href='perfil.html'">
+                <span class="avatar mini" id="avatar-topo">E</span>
+                <span id="nome-topo">everton</span>
+            </button>
+            <button id="sair" class="sair" type="button">Sair</button>
+        </div>
+         <nav>
+                <a href="interno.html"><i class="Inicio1"></i><span>Início</span></a>
+            </nav>
+    </header>
+
+        <section class="feed" aria-label="Eventos do SENAI">
+            <!-- Hero -->
+            <section class="hero-eventos">
+                <p class="eyebrow">Sua comunidade acadêmica</p>
+                <h1>Eventos SENAI</h1>
+                <p>Participe de apresentações, oficinas, palestras e encontros da comunidade. Fique por dentro de tudo que acontece no SENAI.</p>
+                <i class="fa-solid fa-calendar-check icon-hero"></i>
+            </section>
+
+            <!-- Filtros -->
+            <div class="tabs-eventos">
+                <button class="tab-evento ativo" data-filtro="todos">Todos</button>
+                <button class="tab-evento" data-filtro="apresentacao">Apresentações</button>
+                <button class="tab-evento" data-filtro="oficina">Oficinas</button>
+                <button class="tab-evento" data-filtro="palestra">Palestras</button>
+                <button class="tab-evento" data-filtro="hackathon">Hackathons</button>
+                <button class="tab-evento" data-filtro="institucional">Institucional</button>
+                <button class="tab-evento" data-filtro="exibicao">Exibições</button>
+            </div>
+
+            <!-- Grid de eventos -->
+            <div class="grid-eventos" id="grid-eventos"></div>
+
+            <!-- Seção de Apresentações de Turma -->
+            <section class="secao-apresentacoes" id="apresentacoes-secao">
+                <h2><i class="fa-solid fa-chalkboard"></i> Apresentações de Turma</h2>
+                <div id="lista-apresentacoes"></div>
+            </section>
+        </section>
+
+        <aside class="lateral-direita">
+            <!-- Mini Calendário -->
+            <section class="calendario-mini">
+                <h3><i class="fa-regular fa-calendar"></i> Agosto 2026</h3>
+                <div class="mes-navegacao">
+                    <button id="mes-anterior"><i class="fa-solid fa-chevron-left"></i></button>
+                    <strong>Agosto 2026</strong>
+                    <button id="mes-proximo"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <div class="dias-grid" id="dias-grid"></div>
+            </section>
+
+            <!-- Próximos Eventos -->
+            <section class="card-lateral">
+                <div class="titulo-card">
+                    <h2>Próximos eventos</h2><a href="#">Agenda</a>
+                </div>
+                <div class="timeline-eventos" id="timeline-eventos"></div>
+            </section>
+
+            <!-- Estatísticas -->
+            <section class="card-lateral">
+                <div class="titulo-card">
+                    <h2>Suas participações</h2>
+                </div>
+                <div class="stats-row">
+                    <span>Eventos confirmados</span>
+                    <strong>3</strong>
+                </div>
+                <div class="stats-row">
+                    <span>Apresentações dadas</span>
+                    <strong>1</strong>
+                </div>
+                <div class="stats-row">
+                    <span>Certificados</span>
+                    <strong>5</strong>
+                </div>
+                <div class="stats-row">
+                    <span>Horas de atividade</span>
+                    <strong>42h</strong>
+                </div>
+            </section>
+        </aside>
+    </main>
+
+    <!-- Modal de Detalhes do Evento -->
+    <div class="modal-evento" id="modal-evento-detalhe">
+        <div class="modal-evento-conteudo">
+            <button class="modal-fechar" id="fechar-modal-evento" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-evento-capa" id="modal-evento-capa"></div>
+            <div class="modal-evento-corpo">
+                <span class="evento-tag" id="modal-evento-tag"></span>
+                <h2 id="modal-evento-titulo"></h2>
+                <div class="meta-detalhe" id="modal-evento-meta"></div>
+                <p class="descricao" id="modal-evento-descricao"></p>
+                <div class="programacao">
+                    <h4>Programação</h4>
+                    <div id="modal-evento-programa"></div>
+                </div>
+                <button class="btn-participar" id="modal-evento-btn" style="width:100%; margin-top: 18px; padding: 12px;">
+                    Confirmar Participação
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== DADOS DE EVENTOS =====
+        const eventos = [
+            {
+                id: 1, titulo: "Mostra de Projetos Front-end", tipo: "apresentacao",
+                tag: "Apresentação", tagClass: "tag-apresentacao",
+                dia: 30, mes: "JUL", hora: "19h00", local: "Auditório Principal",
+                descricao: "Apresentação dos projetos finais da turma de Programador Front-end. Os alunos demonstrarão suas landing pages, aplicações web e portfólios para professores e convidados.",
+                capa: "linear-gradient(135deg, #1a237e 0%, #283593 50%, #6c8cff 100%)",
+                vagas: "40 vagas", vagasNum: 40, participantes: 28,
+                programa: [
+                    { hora: "19:00", desc: "Abertura e boas-vindas" },
+                    { hora: "19:15", desc: "Apresentações das equipes" },
+                    { hora: "20:30", desc: "Sessão de feedback" },
+                    { hora: "21:00", desc: "Encerramento" }
+                ]
+            },
+            {
+                id: 2, titulo: "Oficina de GitHub e Colaboração", tipo: "oficina",
+                tag: "Oficina", tagClass: "tag-oficina",
+                dia: 2, mes: "AGO", hora: "14h00", local: "Laboratório 3",
+                descricao: "Aprenda a usar Git e GitHub na prática! Esta oficina vai ensinar controle de versão, colaboração em equipe, branches e pull requests.",
+                capa: "linear-gradient(135deg, #0d1b3e 0%, #1a2d6b 50%, #42a5f5 100%)",
+                vagas: "25 vagas", vagasNum: 25, participantes: 18,
+                programa: [
+                    { hora: "14:00", desc: "Introdução ao Git" },
+                    { hora: "14:30", desc: "Prática: repositório e commits" },
+                    { hora: "15:30", desc: "Branches e merge" },
+                    { hora: "16:00", desc: "Pull Requests e colaboração" }
+                ]
+            },
+            {
+                id: 3, titulo: "Palestra: Tendências de IA na Educação", tipo: "palestra",
+                tag: "Palestra", tagClass: "tag-palestra",
+                dia: 5, mes: "AGO", hora: "10h00", local: "Auditório Principal",
+                descricao: "Palestra sobre como a inteligência artificial está transformando a educação profissional. Com convidado especial da área de tecnologia.",
+                capa: "linear-gradient(135deg, #0a1628 0%, #132244 50%, #4db6ac 100%)",
+                vagas: "100 vagas", vagasNum: 100, participantes: 67,
+                programa: [
+                    { hora: "10:00", desc: "Abertura institucional" },
+                    { hora: "10:15", desc: "Palestra: IA e Educação 4.0" },
+                    { hora: "11:15", desc: "Painel de perguntas e respostas" },
+                    { hora: "11:45", desc: "Encerramento" }
+                ]
+            },
+            {
+                id: 4, titulo: "Hackathon Inovação SENAI 2026", tipo: "hackathon",
+                tag: "Hackathon", tagClass: "tag-hackathon",
+                dia: 15, mes: "AGO", hora: "08h00", local: "Espaço Maker",
+                descricao: "24 horas de programação e inovação! Equipes de até 5 pessoas criarão soluções tecnológicas para problemas reais da indústria.",
+                capa: "linear-gradient(135deg, #1a0a3e 0%, #2d1b69 50%, #ce93d8 100%)",
+                vagas: "50 vagas", vagasNum: 50, participantes: 42,
+                programa: [
+                    { hora: "08:00", desc: "Credenciamento e abertura" },
+                    { hora: "09:00", desc: "Divulgação dos desafios" },
+                    { hora: "09:30", desc: "Início da programação" },
+                    { hora: "21:00", desc: "Apresentação dos resultados" },
+                    { hora: "22:00", desc: "Premiação" }
+                ]
+            },
+            {
+                id: 5, titulo: "Cerimônia de Formatura - Turma 2026", tipo: "institucional",
+                tag: "Institucional", tagClass: "tag-institucional",
+                dia: 20, mes: "AGO", hora: "18h00", local: "Centro de Eventos",
+                descricao: "Cerimônia de formatura dos alunos dos cursos de Programador Front-end, Programador Back-end e Técnico em Informática. Um momento especial para celebrar conquistas!",
+                capa: "linear-gradient(135deg, #1a1200 0%, #3d2400 50%, #ffa726 100%)",
+                vagas: "200 vagas", vagasNum: 200, participantes: 156,
+                programa: [
+                    { hora: "18:00", desc: "Abertura e recepção" },
+                    { hora: "18:30", desc: "Hino Nacional" },
+                    { hora: "18:35", desc: "Discurso dos formandos" },
+                    { hora: "19:00", desc: "Entrega de certificados" },
+                    { hora: "20:00", desc: "Encerramento" }
+                ]
+            },
+            {
+                id: 6, titulo: "Workshop: UX Design para Iniciantes", tipo: "oficina",
+                tag: "Workshop", tagClass: "tag-workshop",
+                dia: 8, mes: "AGO", hora: "09h00", local: "Laboratório 1",
+                descricao: "Introdução ao design de experiência do usuário. Aprenda sobre pesquisa, prototipagem e teste de usabilidade de forma prática.",
+                capa: "linear-gradient(135deg, #2a0a1e 0%, #4a1030 50%, #ef5350 100%)",
+                vagas: "30 vagas", vagasNum: 30, participantes: 22,
+                programa: [
+                    { hora: "09:00", desc: "O que é UX Design?" },
+                    { hora: "09:45", desc: "Pesquisa com usuários" },
+                    { hora: "10:30", desc: "Prototipagem no Figma" },
+                    { hora: "11:30", desc: "Teste de usabilidade" }
+                ]
+            },
+            {
+                id: 7, titulo: "Exposição de Robótica Industrial", tipo: "exibicao",
+                tag: "Exibição", tagClass: "tag-exibicao",
+                dia: 12, mes: "AGO", hora: "10h00", local: "Hangar de Exposições",
+                descricao: "Exposição com robôs industriais programados pelos alunos. Demonstrações ao vivo de automação, braços robóticos e sistemas inteligentes.",
+                capa: "linear-gradient(135deg, #0a1a2e 0%, #143050 50%, #b39ddb 100%)",
+                vagas: "80 vagas", vagasNum: 80, participantes: 35,
+                programa: [
+                    { hora: "10:00", desc: "Abertura das exposições" },
+                    { hora: "10:30", desc: "Demo: Braço robótico" },
+                    { hora: "11:00", desc: "Demo: Automação industrial" },
+                    { hora: "12:00", desc: "Sessão interativa" }
+                ]
+            },
+            {
+                id: 8, titulo: "Feira de Inovação e Projetos", tipo: "exibicao",
+                tag: "Exibição", tagClass: "tag-exibicao",
+                dia: 25, mes: "AGO", hora: "09h00", local: "Área Externa",
+                descricao: "Feira de inovação com projetos de todas as áreas: mecânica, informática, eletrônica e logística. Visite os estandes e conheça as soluções desenvolvidas pelos alunos.",
+                capa: "linear-gradient(135deg, #0d1b2e 0%, #162d4a 50%, #66bb6a 100%)",
+                vagas: "300 vagas", vagasNum: 300, participantes: 89,
+                programa: [
+                    { hora: "09:00", desc: "Abertura oficial" },
+                    { hora: "09:30", desc: "Visitação dos estandes" },
+                    { hora: "11:00", desc: "Apresentações nos palcos" },
+                    { hora: "13:00", desc: "Almoço e networking" },
+                    { hora: "14:00", desc: "Continuação" },
+                    { hora: "17:00", desc: "Premiação e encerramento" }
+                ]
+            }
+        ];
+
+        // ===== APRESENTAÇÕES DE TURMA =====
+        const apresentacoes = [
+            {
+                dia: 30, mes: "JUL",
+                titulo: "Apresentação Final — Projeto Landing Page",
+                turma: "Programador Front-end · Turma A",
+                descricao: "Os alunos apresentarão suas landing pages responsivas desenvolvidas durante o curso. Avaliação por banca de professores e convidados da indústria."
+            },
+            {
+                dia: 1, mes: "AGO",
+                titulo: "Defesa de Projeto — Sistema de Controle",
+                turma: "Técnico em Informática · Turma B",
+                descricao: "Defesa dos projetos de sistema de controle de estoque desenvolvidos em equipe, utilizando Python e banco de dados."
+            },
+            {
+                dia: 6, mes: "AGO",
+                titulo: "Pitch de Startups — Ideias de Negócio",
+                turma: "Empreendedorismo Digital · Turma C",
+                descricao: "Apresentação de pitches com ideias de startups. Cada equipe terá 5 minutos para apresentar seu modelo de negócio para jurados."
+            },
+            {
+                dia: 10, mes: "AGO",
+                titulo: "Apresentação — Automação Industrial",
+                turma: "Mecatrônica · Turma A",
+                descricao: "Demonstração de sistemas de automação industrial com CLPs programáveis e supervisório. Apresentações práticas no laboratório."
+            },
+            {
+                dia: 14, mes: "AGO",
+                titulo: "Apresentação — App Mobile",
+                turma: "Desenvolvimento Mobile · Turma B",
+                descricao: "Apresentação dos aplicativos móveis desenvolvidos com React Native. Demonstração em dispositivos reais com avaliação de usabilidade."
+            }
+        ];
+
+        // ===== RENDERIZAR EVENTOS =====
+        function renderizarEventos(filtro = 'todos') {
+            const grid = document.getElementById('grid-eventos');
+            const eventosFiltrados = filtro === 'todos'
+                ? eventos
+                : eventos.filter(e => e.tipo === filtro);
+
+            grid.innerHTML = eventosFiltrados.map(ev => `
+                <div class="card-evento" data-id="${ev.id}" data-tipo="${ev.tipo}">
+                    <div class="evento-capa" style="background: ${ev.capa}">
+                        <span class="evento-tag ${ev.tagClass}">${ev.tag}</span>
+                        <div class="data-badge">
+                            <strong>${String(ev.dia).padStart(2, '0')}</strong>
+                            <small>${ev.mes}</small>
+                        </div>
+                    </div>
+                    <div class="evento-corpo">
+                        <h3>${ev.titulo}</h3>
+                        <p>${ev.descricao.substring(0, 100)}...</p>
+                        <div class="evento-meta">
+                            <span><i class="fa-regular fa-clock"></i> ${ev.hora}</span>
+                            <span><i class="fa-solid fa-location-dot"></i> ${ev.local}</span>
+                            <span><i class="fa-solid fa-users"></i> ${ev.participantes} inscritos</span>
+                        </div>
+                    </div>
+                    <div class="evento-rodape">
+                        <span class="vagas"><strong>${ev.vagas}</strong> restantes</span>
+                        <button class="btn-participar" onclick="confirmarParticipacao(${ev.id}, this)">Participar</button>
+                    </div>
+                </div>
+            `).join('');
+
+            document.querySelectorAll('.card-evento').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('btn-participar')) return;
+                    const id = parseInt(this.dataset.id);
+                    abrirModalEvento(id);
+                });
+            });
+        }
+
+        // ===== RENDERIZAR APRESENTAÇÕES =====
+        function renderizarApresentacoes() {
+            const lista = document.getElementById('lista-apresentacoes');
+            lista.innerHTML = apresentacoes.map(ap => `
+                <div class="card-apresentacao">
+                    <div class="apresentacao-data">
+                        <strong>${String(ap.dia).padStart(2, '0')}</strong>
+                        <small>${ap.mes}</small>
+                    </div>
+                    <div class="apresentacao-info">
+                        <h3>${ap.titulo}</h3>
+                        <p>${ap.descricao}</p>
+                        <span class="turma-badge">${ap.turma}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ===== FILTROS =====
+        document.querySelectorAll('.tab-evento').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab-evento').forEach(t => t.classList.remove('ativo'));
+                this.classList.add('ativo');
+                renderizarEventos(this.dataset.filtro);
+            });
+        });
+
+        // ===== CONFIRMAR PARTICIPAÇÃO =====
+        function confirmarParticipacao(id, btn) {
+            event.stopPropagation();
+            if (btn.classList.contains('confirmado')) {
+                btn.classList.remove('confirmado');
+                btn.textContent = 'Participar';
+            } else {
+                btn.classList.add('confirmado');
+                btn.textContent = 'Confirmado ✓';
+                mostrarToast('Participação confirmada com sucesso!');
+            }
+        }
+
+        // ===== MODAL =====
+        function abrirModalEvento(id) {
+            const ev = eventos.find(e => e.id === id);
+            if (!ev) return;
+
+            document.getElementById('modal-evento-capa').style.background = ev.capa;
+            document.getElementById('modal-evento-titulo').textContent = ev.titulo;
+            document.getElementById('modal-evento-descricao').textContent = ev.descricao;
+
+            const tag = document.getElementById('modal-evento-tag');
+            tag.textContent = ev.tag;
+            tag.className = 'evento-tag ' + ev.tagClass;
+            tag.style.position = 'static';
+
+            document.getElementById('modal-evento-meta').innerHTML = `
+                <span><i class="fa-regular fa-calendar"></i> ${String(ev.dia).padStart(2, '0')} ${ev.mes} 2026</span>
+                <span><i class="fa-regular fa-clock"></i> ${ev.hora}</span>
+                <span><i class="fa-solid fa-location-dot"></i> ${ev.local}</span>
+                <span><i class="fa-solid fa-users"></i> ${ev.participantes}/${ev.vagasNum} inscritos</span>
+            `;
+
+            document.getElementById('modal-evento-programa').innerHTML = ev.programa.map(p => `
+                <div class="programa-item">
+                    <span class="hora">${p.hora}</span>
+                    <span>${p.desc}</span>
+                </div>
+            `).join('');
+
+            const btn = document.getElementById('modal-evento-btn');
+            btn.onclick = function() {
+                this.textContent = 'Confirmado ✓';
+                this.style.background = 'rgba(46, 125, 50, 0.2)';
+                this.style.color = '#66bb6a';
+                this.style.border = '1px solid rgba(46, 125, 50, 0.3)';
+                mostrarToast('Participação confirmada!');
+            };
+
+            document.getElementById('modal-evento-detalhe').classList.add('aberto');
+        }
+
+        document.getElementById('fechar-modal-evento').addEventListener('click', () => {
+            document.getElementById('modal-evento-detalhe').classList.remove('aberto');
+        });
+        document.getElementById('modal-evento-detalhe').addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('aberto');
+        });
+
+        // ===== CALENDÁRIO =====
+        function renderizarCalendario() {
+            const grid = document.getElementById('dias-grid');
+            const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            const diasComEvento = [2, 5, 8, 10, 12, 14, 15, 20, 25, 28];
+
+            let html = diasSemana.map(d => `<span class="dia-header">${d}</span>`).join('');
+            for (let i = 0; i < 6; i++) html += `<span class="dia"></span>`;
+            for (let d = 1; d <= 31; d++) {
+                const cls = ['dia'];
+                if (diasComEvento.includes(d)) cls.push('tenha-evento');
+                if (d === 30) cls.push('hoje');
+                html += `<span class="${cls.join(' ')}">${d}</span>`;
+            }
+            grid.innerHTML = html;
+        }
+
+        // ===== TIMELINE =====
+        function renderizarTimeline() {
+            const timeline = document.getElementById('timeline-eventos');
+            const proximos = [...eventos].sort((a, b) => a.dia - b.dia).slice(0, 4);
+            timeline.innerHTML = proximos.map(ev => `
+                <div class="timeline-item">
+                    <div class="t-dia">${String(ev.dia).padStart(2, '0')} ${ev.mes} · ${ev.hora}</div>
+                    <h4>${ev.titulo}</h4>
+                    <small>${ev.local}</small>
+                </div>
+            `).join('');
+        }
+
+        // ===== TOAST =====
+        function mostrarToast(msg) {
+            let toast = document.getElementById('toast-msg');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast-msg';
+                toast.className = 'toast';
+                document.body.appendChild(toast);
+            }
+            toast.textContent = msg;
+            toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; }, 3000);
+        }
+
+        // ===== BUSCA =====
+        document.getElementById('busca').addEventListener('input', function() {
+            const q = this.value.toLowerCase().trim();
+            if (!q) { renderizarEventos(document.querySelector('.tab-evento.ativo').dataset.filtro); return; }
+            const filtrados = eventos.filter(e =>
+                e.titulo.toLowerCase().includes(q) ||
+                e.descricao.toLowerCase().includes(q) ||
+                e.tipo.toLowerCase().includes(q) ||
+                e.local.toLowerCase().includes(q)
+            );
+            document.getElementById('grid-eventos').innerHTML = filtrados.map(ev => `
+                <div class="card-evento" data-id="${ev.id}">
+                    <div class="evento-capa" style="background: ${ev.capa}">
+                        <span class="evento-tag ${ev.tagClass}">${ev.tag}</span>
+                        <div class="data-badge"><strong>${String(ev.dia).padStart(2, '0')}</strong><small>${ev.mes}</small></div>
+                    </div>
+                    <div class="evento-corpo">
+                        <h3>${ev.titulo}</h3>
+                        <p>${ev.descricao.substring(0, 100)}...</p>
+                        <div class="evento-meta">
+                            <span><i class="fa-regular fa-clock"></i> ${ev.hora}</span>
+                            <span><i class="fa-solid fa-location-dot"></i> ${ev.local}</span>
+                        </div>
+                    </div>
+                    <div class="evento-rodape">
+                        <span class="vagas"><strong>${ev.vagas}</strong></span>
+                        <button class="btn-participar" onclick="confirmarParticipacao(${ev.id}, this)">Participar</button>
+                    </div>
+                </div>
+            `).join('');
+        });
+
+        // ===== INIT =====
+        document.addEventListener('DOMContentLoaded', () => {
+            renderizarEventos();
+            renderizarApresentacoes();
+            renderizarCalendario();
+            renderizarTimeline();
+        });
+    </script>
+</body>
+
+</html>
