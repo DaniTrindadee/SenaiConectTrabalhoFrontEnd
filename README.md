@@ -304,7 +304,7 @@ Abra o arquivo **index.html** em seu navegador.
 
 ## Antonio Fidalgo
 
-<a href="https://github.com/SEU-USUARIO">
+<a href="https://github.com/Tonio0012">
   <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white"/>
 </a>
 
@@ -316,7 +316,7 @@ Abra o arquivo **index.html** em seu navegador.
   <img src="https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white"/>
 </a>
 
-<a href="mailto:seuemail@email.com">
+<a href="mailto:seuemail@email">
   <img src="https://img.shields.io/badge/E--mail-EA4335?style=for-the-badge&logo=gmail&logoColor=white"/>
 </a>
 
