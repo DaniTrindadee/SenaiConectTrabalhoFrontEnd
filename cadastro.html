@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro | SenaiConnect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+    <main class="auth-layout">
+        <section class="auth-apresentacao">
+            <a class="marca" href="index.html" aria-label="Voltar para a página inicial">
+                <span class="marca-icone">CP</span>
+                <span>Senai Connect</span>
+            </a>
+
+            <div>
+                <p class="eyebrow">Faça parte da comunidade</p>
+                <h1>Conecte-se a pessoas, projetos e oportunidades.</h1>
+                <p class="descricao">Crie seu perfil acadêmico e comece a construir sua presença profissional.</p>
+            </div>
+        </section>
+
+        <section class="auth-card cadastro-card" aria-labelledby="titulo-cadastro">
+            <a class="voltar" href="index.html"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
+            <p class="eyebrow">Novo participante</p>
+            <h2 id="titulo-cadastro">Criar conta</h2>
+
+            <form id="form-cadastro" novalidate>
+                <div class="duas-colunas">
+                    <div>
+                        <label for="nome">Nome completo</label>
+                        <div class="campo"><i class="fa-regular fa-user"></i><input id="nome" name="nome" type="text" autocomplete="name" placeholder="Seu nome" required></div>
+                    </div>
+                    <div>
+                        <label for="matricula">Matrícula</label>
+                        <div class="campo"><i class="fa-regular fa-id-card"></i><input id="matricula" name="matricula" type="text" inputmode="numeric" placeholder="Sua matrícula" required></div>
+                    </div>
+                </div>
+
+                <label for="curso">Curso ou área</label>
+                <div class="campo">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <select id="curso" name="curso" required>
+                        <option value="">Selecione</option>
+                        <option>Programador Frontend</option>
+                        <option>Programador Backend</option>
+                        <option>Metal-Mecânica</option>
+                        <option>Construção Civil</option>
+                        <option>Logística</option>
+                        <option>Outro curso</option>
+                    </select>
+                </div>
+
+                <div class="duas-colunas">
+                    <div>
+                        <label for="senha">Senha</label>
+                        <div class="campo"><i class="fa-solid fa-lock"></i><input id="senha" name="senha" type="password" autocomplete="new-password" placeholder="Mínimo 4 caracteres" required></div>
+                    </div>
+                    <div>
+                        <label for="confirmar-senha">Confirmar senha</label>
+                        <div class="campo"><i class="fa-solid fa-shield-halved"></i><input id="confirmar-senha" name="confirmarSenha" type="password" autocomplete="new-password" placeholder="Repita a senha" required></div>
+                    </div>
+                </div>
+
+                <p id="mensagem" class="mensagem" role="alert"></p>
+                <button class="botao-principal" type="submit">Criar minha conta</button>
+            </form>
+
+            <p class="alternativa">Já possui cadastro? <a href="login.html">Entrar</a></p>
+            <p class="aviso-mvp">MVP local para apresentação. Não utilize uma senha real.</p>
+        </section>
+    </main>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

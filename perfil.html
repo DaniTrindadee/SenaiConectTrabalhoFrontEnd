@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil | Senai Connect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/profile.css">
+</head>
+
+<body>
+    <header class="topo">
+        <a class="marca" href="interno.html" aria-label="Voltar ao feed">
+            <span class="Logo">
+                <img src="https://i.ibb.co/xqQp0Z7V/Chat-GPT-Image-30-de-jul-de-2026-11-08-57.png" alt="Logo">
+            </span>
+            <strong>Senai Connect</strong>
+        </a>
+        <nav class="topo-acoes" aria-label="Ações do perfil">
+            <a href="interno.html"><i class="fa-solid fa-house"></i> Feed</a>
+            <button id="compartilhar-perfil" type="button"><i class="fa-solid fa-share-nodes"></i> Compartilhar
+                perfil</button>
+            <button id="sair" class="sair" type="button">Sair</button>
+        </nav>
+    </header>
+
+    <main class="pagina-perfil">
+        <section class="capa-perfil">
+            <div class="capa-brilho"></div>
+            <div class="identidade">
+                <label class="avatar-grande" for="foto-perfil" title="Alterar foto">
+                    <span id="avatar-inicial">A</span>
+                    <img id="avatar-foto" alt="Foto do perfil" hidden>
+                    <i class="fa-solid fa-camera"></i>
+                </label>
+                <input id="foto-perfil" type="file" accept="image/*" hidden>
+
+                <div class="dados-principais">
+                    <p class="eyebrow">Perfil profissional SENAI</p>
+                    <h1 id="nome-perfil">Aluno ConexãoPro</h1>
+                    <p id="curso-perfil">Comunidade acadêmica</p>
+                    <div class="selos-topo">
+                        <span><i class="fa-solid fa-bolt"></i> Nível <b id="nivel">1</b></span>
+                        <span><i class="fa-solid fa-fire"></i> 7 dias de sequência</span>
+                        <span><i class="fa-solid fa-circle-check"></i> Perfil verificado</span>
+                    </div>
+                </div>
+
+                <div class="pontuacao">
+                    <span>Força do perfil</span>
+                    <strong id="forca-perfil">74%</strong>
+                    <div class="barra-forca"><span id="barra-forca"></span></div>
+                    <small>Complete projetos e conquistas para aumentar sua visibilidade.</small>
+                </div>
+            </div>
+        </section>
+
+        <section class="estatisticas" aria-label="Estatísticas do perfil">
+            <article><i class="fa-solid fa-diagram-project"></i>
+                <div><strong id="total-projetos">0</strong><span>Projetos</span></div>
+            </article>
+            <article><i class="fa-solid fa-medal"></i>
+                <div><strong id="total-conquistas">3</strong><span>Conquistas</span></div>
+            </article>
+            <article><i class="fa-solid fa-certificate"></i>
+                <div><strong>4</strong><span>Certificados</span></div>
+            </article>
+            <article><i class="fa-solid fa-users"></i>
+                <div><strong>128</strong><span>Conexões</span></div>
+            </article>
+        </section>
+
+        <div class="grade-principal">
+            <section class="coluna-conteudo">
+                <article class="card sobre">
+                    <header>
+                        <div>
+                            <p class="eyebrow">Apresentação</p>
+                            <h2>Sobre mim</h2>
+                        </div><button id="editar-sobre" type="button"><i class="fa-regular fa-pen-to-square"></i>
+                            Editar</button>
+                    </header>
+                    <p id="texto-sobre">Estudante do SENAI apaixonado por tecnologia, projetos práticos e novas
+                        oportunidades profissionais. Estou construindo meu portfólio e evoluindo um passo de cada vez.
+                    </p>
+                </article>
+
+                <article class="card">
+                    <header>
+                        <div>
+                            <p class="eyebrow">Portfólio</p>
+                            <h2>Projetos em destaque</h2>
+                        </div><a href="interno.html">Publicar projeto</a>
+                    </header>
+                    <div id="grade-projetos" class="grade-projetos"></div>
+                </article>
+
+                <article class="card">
+                    <header>
+                        <div>
+                            <p class="eyebrow">Jornada</p>
+                            <h2>Linha do tempo</h2>
+                        </div>
+                    </header>
+                    <div class="linha-tempo">
+                        <div><span></span><time>2026</time>
+                            <article><i class="fa-solid fa-school"></i>
+                                <div><strong>Entrou para a comunidade ConexãoPro</strong>
+                                    <p>Início da jornada acadêmica e profissional.</p>
+                                </div>
+                            </article>
+                        </div>
+                        <div><span></span><time>Julho</time>
+                            <article><i class="fa-solid fa-rocket"></i>
+                                <div><strong>Primeira publicação</strong>
+                                    <p>Compartilhou conhecimento com a comunidade.</p>
+                                </div>
+                            </article>
+                        </div>
+                        <div><span></span><time>Hoje</time>
+                            <article><i class="fa-solid fa-code"></i>
+                                <div><strong>Construindo novos projetos</strong>
+                                    <p>Evolução contínua em Front-end e experiências digitais.</p>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                </article>
+            </section>
+
+            <aside class="coluna-lateral">
+                <article class="card mentor-ia">
+                    <div class="icone-ia"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                    <p class="eyebrow">Mentor ConexãoPro</p>
+                    <h2>IA analisa meu perfil</h2>
+                    <p>Receba uma análise rápida dos seus pontos fortes e do próximo passo recomendado.</p>
+                    <button id="analisar-perfil" type="button"><i class="fa-solid fa-sparkles"></i> Analisar
+                        agora</button>
+                </article>
+
+                <article class="card">
+                    <header>
+                        <div>
+                            <p class="eyebrow">Competências</p>
+                            <h2>Tecnologias</h2>
+                        </div>
+                    </header>
+                    <div class="competencias">
+                        <div>
+                            <p><span>HTML</span><b>92%</b></p>
+                            <div><span style="--progresso:92%"></span></div>
+                        </div>
+                        <div>
+                            <p><span>CSS</span><b>84%</b></p>
+                            <div><span style="--progresso:84%"></span></div>
+                        </div>
+                        <div>
+                            <p><span>JavaScript</span><b>63%</b></p>
+                            <div><span style="--progresso:63%"></span></div>
+                        </div>
+                        <div>
+                            <p><span>Git & GitHub</span><b>55%</b></p>
+                            <div><span style="--progresso:55%"></span></div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <header>
+                        <div>
+                            <p class="eyebrow">Reconhecimento</p>
+                            <h2>Conquistas</h2>
+                        </div>
+                    </header>
+                    <div id="lista-conquistas" class="conquistas">
+                        <div class="conquista ativa"><span>🚀</span>
+                            <div><strong>Primeiro passo</strong><small>Entrou no ConexãoPro</small></div>
+                        </div>
+                        <div class="conquista ativa"><span>💬</span>
+                            <div><strong>Voz da comunidade</strong><small>Fez uma publicação</small></div>
+                        </div>
+                        <div class="conquista ativa"><span>🤝</span>
+                            <div><strong>Conectado</strong><small>Interagiu no feed</small></div>
+                        </div>
+                        <div class="conquista bloqueada"><span>🏆</span>
+                            <div><strong>Projeto destaque</strong><small>Receba 20 curtidas</small></div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="card certificados">
+                    <header>
+                        <div>
+                            <p class="eyebrow">Formação</p>
+                            <h2>Certificados</h2>
+                        </div>
+                    </header>
+                    <div><i class="fa-solid fa-certificate"></i><span><strong>HTML e CSS</strong><small>SENAI ·
+                                2026</small></span></div>
+                    <div><i class="fa-solid fa-certificate"></i><span><strong>Lógica de Programação</strong><small>SENAI
+                                · 2026</small></span></div>
+                    <div><i class="fa-solid fa-certificate"></i><span><strong>Git e GitHub</strong><small>ConexãoPro
+                                Academy</small></span></div>
+                </article>
+            </aside>
+        </div>
+    </main>
+
+    <div id="modal-ia" class="modal" aria-hidden="true">
+        <section class="modal-conteudo" role="dialog" aria-modal="true" aria-labelledby="titulo-analise">
+            <button id="fechar-ia" class="fechar" type="button" aria-label="Fechar"><i
+                    class="fa-solid fa-xmark"></i></button>
+            <div class="icone-ia grande"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+            <p class="eyebrow">Análise ConexãoPro</p>
+            <h2 id="titulo-analise">Seu perfil está ganhando força</h2>
+            <div id="resultado-ia" class="resultado-ia"></div>
+            <button id="fechar-resultado" class="botao-principal" type="button">Continuar evoluindo</button>
+        </section>
+    </div>
+
+    <div id="modal-sobre" class="modal" aria-hidden="true">
+        <section class="modal-conteudo" role="dialog" aria-modal="true" aria-labelledby="titulo-sobre">
+            <button id="fechar-sobre" class="fechar" type="button" aria-label="Fechar"><i
+                    class="fa-solid fa-xmark"></i></button>
+            <p class="eyebrow">Apresentação profissional</p>
+            <h2 id="titulo-sobre">Editar “Sobre mim”</h2>
+            <textarea id="campo-sobre" maxlength="400"></textarea>
+            <button id="salvar-sobre" class="botao-principal" type="button">Salvar apresentação</button>
+        </section>
+    </div>
+
+<script src="js/api.js"></script>
+    <script src="js/perfil.js"></script>
+</body>
+</html>
