@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Início | ConexãoPro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/interno.css">
+</head>
+<body>
+    <header class="topo">
+        <a class="marca" href="interno.html" aria-label="Página inicial do ConexãoPro">
+            <span>CP</span>
+            <strong>ConexãoPro</strong>
+        </a>
+
+        <label class="pesquisa" for="busca">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="busca" type="search" placeholder="Pesquisar pessoas, projetos e cursos">
+        </label>
+
+        <div class="acoes-topo">
+            <button id="abrir-mensagens" type="button" aria-label="Mensagens"><i class="fa-regular fa-comment-dots"></i></button>
+            <button id="abrir-notificacoes" type="button" aria-label="Notificações"><i class="fa-regular fa-bell"></i><span id="contador-notificacoes" class="notificacao">0</span></button>
+            <button id="perfil-topo" class="perfil-topo" type="button" onclick="window.location.href='perfil.html'">
+                <span class="avatar mini" id="avatar-topo">A</span>
+                <span id="nome-topo">Aluno</span>
+            </button>
+            <button id="sair" class="sair" type="button">Sair</button>
+        </div>
+    </header>
+
+    <main class="painel">
+        <aside class="menu-lateral">
+            <div class="perfil-resumo">
+                <div class="avatar" id="avatar">A</div>
+                <strong id="nome-usuario">Aluno ConexãoPro</strong>
+                <span id="curso-usuario">Comunidade SENAI</span>
+                <button type="button" onclick="window.location.href='perfil.html'">Ver meu perfil</button>
+                <div class="nivel-resumo" aria-label="Progresso de nível">
+                    <div><span>Nível <b id="nivel-feed">1</b></span><small id="xp-feed">0/100 XP</small></div>
+                    <div class="barra-nivel"><span id="barra-nivel-feed"></span></div>
+                </div>
+            </div>
+
+            <nav aria-label="Navegação principal">
+                <a class="ativo" href="#"><i class="fa-solid fa-house"></i><span>Início</span></a>
+                <a href="#"><i class="fa-solid fa-graduation-cap"></i><span>Cursos</span></a>
+                <a href="#"><i class="fa-solid fa-users"></i><span>Comunidades</span></a>
+                <a href="#"><i class="fa-solid fa-diagram-project"></i><span>Projetos</span></a>
+                <a href="#"><i class="fa-solid fa-trophy"></i><span>Desafios</span></a>
+                <a href="#"><i class="fa-regular fa-message"></i><span>Mensagens</span></a>
+            </nav>
+
+            <div class="menu-rodape">
+                <a href="perfil.html"><i class="fa-solid fa-user"></i> Meu perfil</a>
+                <a href="#"><i class="fa-solid fa-gear"></i> Configurações</a>
+            </div>
+        </aside>
+
+        <section class="feed" aria-label="Feed principal">
+            <section class="boas-vindas">
+                <div>
+                    <p class="eyebrow">Sua comunidade acadêmica</p>
+                    <h1>Olá, <span id="primeiro-nome">aluno</span>! <span aria-hidden="true">👋</span></h1>
+                    <p>Hoje é um ótimo dia para aprender, compartilhar e criar novas conexões.</p>
+                </div>
+                <div class="progresso-resumo">
+                    <span>Seu progresso em Front-end</span>
+                    <strong>68%</strong>
+                    <div class="barra"><span></span></div>
+                </div>
+            </section>
+
+            <article class="criar-publicacao">
+                <div class="avatar pequeno" id="avatar-publicacao">A</div>
+                <button id="abrir-publicacao" type="button">O que você está aprendendo hoje?</button>
+                <div class="atalhos-publicacao">
+                    <button id="atalho-projeto" type="button"><i class="fa-regular fa-image"></i> Projeto</button>
+                    <button id="atalho-duvida" type="button"><i class="fa-regular fa-circle-question"></i> Dúvida</button>
+                </div>
+            </article>
+
+            <article class="publicacao publicacao-fixa">
+                <header>
+                    <div class="avatar pequeno">MS</div>
+                    <div>
+                        <strong>Mariana Silva</strong>
+                        <span>Programador Frontend · há 2 h</span>
+                    </div>
+                    <button class="mais" type="button" aria-label="Mais opções"><i class="fa-solid fa-ellipsis"></i></button>
+                </header>
+                <p>Finalizei meu primeiro layout responsivo usando HTML, CSS Grid e JavaScript. Cada etapa está virando parte do meu portfólio! 🚀</p>
+                <div class="projeto-demo">
+                    <i class="fa-solid fa-code"></i>
+                    <strong>Projeto de interface responsiva</strong>
+                    <span>HTML · CSS · JavaScript</span>
+                </div>
+                <div class="metricas"><span><b class="contador-curtidas">32</b> curtidas</span><span><b class="contador-comentarios">12</b> comentários</span></div>
+                <footer>
+                    <button class="curtir" type="button"><i class="fa-regular fa-thumbs-up"></i> Curtir</button>
+                    <button class="comentar" type="button"><i class="fa-regular fa-comment"></i> Comentar</button>
+                    <button class="compartilhar" type="button"><i class="fa-solid fa-share-nodes"></i> Compartilhar</button>
+                </footer>
+                <section class="area-comentarios" hidden>
+                    <form class="form-comentario">
+                        <input type="text" maxlength="180" placeholder="Escreva um comentário..." required>
+                        <button type="submit">Enviar</button>
+                    </form>
+                    <div class="lista-comentarios"></div>
+                </section>
+            </article>
+
+            <article class="publicacao destaque-senai">
+                <header>
+                    <div class="avatar pequeno senai"><i class="fa-solid fa-school"></i></div>
+                    <div>
+                        <strong>SENAI Barreto</strong>
+                        <span>Institucional · há 4 h</span>
+                    </div>
+                    <button class="mais" type="button" aria-label="Mais opções"><i class="fa-solid fa-ellipsis"></i></button>
+                </header>
+                <p><strong>Inscrições abertas!</strong> Novas turmas para Programador Front-end e Programador Back-end. Compartilhe com alguém que deseja iniciar uma nova carreira.</p>
+                <a class="acao-post" href="#">Ver cursos disponíveis <i class="fa-solid fa-arrow-right"></i></a>
+                <div class="metricas"><span><b class="contador-curtidas">18</b> curtidas</span><span><b class="contador-comentarios">4</b> comentários</span></div>
+                <footer>
+                    <button class="curtir" type="button"><i class="fa-regular fa-thumbs-up"></i> Curtir</button>
+                    <button class="comentar" type="button"><i class="fa-regular fa-comment"></i> Comentar</button>
+                    <button class="compartilhar" type="button"><i class="fa-solid fa-share-nodes"></i> Compartilhar</button>
+                </footer>
+                <section class="area-comentarios" hidden>
+                    <form class="form-comentario">
+                        <input type="text" maxlength="180" placeholder="Escreva um comentário..." required>
+                        <button type="submit">Enviar</button>
+                    </form>
+                    <div class="lista-comentarios"></div>
+                </section>
+            </article>
+
+            <article class="publicacao publicacao-professor">
+                <header>
+                    <div class="avatar pequeno professor"><i class="fa-solid fa-chalkboard-user"></i></div>
+                    <div>
+                        <strong>Professor Carlos</strong>
+                        <span>Instrutor de Tecnologia · ontem</span>
+                    </div>
+                    <button class="mais" type="button" aria-label="Mais opções"><i class="fa-solid fa-ellipsis"></i></button>
+                </header>
+                <span class="tipo-publicacao">Material</span>
+                <p>Disponibilizei um guia rápido sobre Git e GitHub para ajudar as equipes na organização dos projetos. Quem tiver dúvida pode comentar aqui.</p>
+                <div class="material-post"><i class="fa-brands fa-github"></i><div><strong>Guia Git e GitHub</strong><span>PDF · Material complementar</span></div></div>
+                <div class="metricas"><span><b class="contador-curtidas">24</b> curtidas</span><span><b class="contador-comentarios">7</b> comentários</span></div>
+                <footer>
+                    <button class="curtir" type="button"><i class="fa-regular fa-thumbs-up"></i> Curtir</button>
+                    <button class="comentar" type="button"><i class="fa-regular fa-comment"></i> Comentar</button>
+                    <button class="compartilhar" type="button"><i class="fa-solid fa-share-nodes"></i> Compartilhar</button>
+                </footer>
+            </article>
+
+            <article class="publicacao publicacao-empresa">
+                <header>
+                    <div class="avatar pequeno empresa"><i class="fa-solid fa-building"></i></div>
+                    <div>
+                        <strong>TechVale</strong>
+                        <span>Empresa parceira · há 1 dia</span>
+                    </div>
+                    <button class="mais" type="button" aria-label="Mais opções"><i class="fa-solid fa-ellipsis"></i></button>
+                </header>
+                <span class="tipo-publicacao">Oportunidade</span>
+                <p>Estamos selecionando estudantes para duas vagas de estágio em Front-end. Conhecimentos básicos em HTML, CSS e JavaScript são suficientes para participar.</p>
+                <a class="acao-post" href="#">Ver oportunidade <i class="fa-solid fa-arrow-right"></i></a>
+                <div class="metricas"><span><b class="contador-curtidas">41</b> curtidas</span><span><b class="contador-comentarios">9</b> comentários</span></div>
+                <footer>
+                    <button class="curtir" type="button"><i class="fa-regular fa-thumbs-up"></i> Curtir</button>
+                    <button class="comentar" type="button"><i class="fa-regular fa-comment"></i> Comentar</button>
+                    <button class="compartilhar" type="button"><i class="fa-solid fa-share-nodes"></i> Compartilhar</button>
+                </footer>
+            </article>
+        </section>
+
+        <aside class="lateral-direita">
+            <section class="card-lateral oportunidades">
+                <div class="titulo-card">
+                    <h2>Oportunidades</h2>
+                    <a href="#">Ver todas</a>
+                </div>
+                <article>
+                    <span class="icone-oportunidade"><i class="fa-solid fa-briefcase"></i></span>
+                    <div><strong>Estágio em Front-end</strong><small>Empresa parceira · 2 vagas</small></div>
+                </article>
+                <article>
+                    <span class="icone-oportunidade"><i class="fa-solid fa-lightbulb"></i></span>
+                    <div><strong>Desafio Landing Page</strong><small>Entrega até sexta-feira</small></div>
+                </article>
+            </section>
+
+            <section class="card-lateral">
+                <div class="titulo-card"><h2>Próximos eventos</h2><a href="#">Agenda</a></div>
+                <div class="evento"><span><strong>30</strong><small>JUL</small></span><div><strong>Mostra de Projetos</strong><small>Auditório · 19h</small></div></div>
+                <div class="evento"><span><strong>02</strong><small>AGO</small></span><div><strong>Oficina de GitHub</strong><small>Laboratório 3 · 14h</small></div></div>
+            </section>
+
+            <section class="card-lateral">
+                <div class="titulo-card"><h2>Comunidades</h2><a href="#">Explorar</a></div>
+                <a class="comunidade" href="#"><span>FE</span><div><strong>Frontend SENAI</strong><small>128 membros</small></div></a>
+                <a class="comunidade" href="#"><span>MM</span><div><strong>Metal-Mecânica</strong><small>94 membros</small></div></a>
+                <a class="comunidade" href="#"><span>LG</span><div><strong>Logística</strong><small>76 membros</small></div></a>
+            </section>
+        </aside>
+    </main>
+
+
+    <aside id="painel-notificacoes" class="painel-notificacoes" aria-hidden="true">
+        <header>
+            <div><strong>Notificações</strong><small>Conquistas e novidades da sua comunidade</small></div>
+            <button id="marcar-lidas" type="button">Marcar como lidas</button>
+        </header>
+        <div id="lista-notificacoes" class="lista-notificacoes"></div>
+    </aside>
+
+    <div id="conquista-toast" class="conquista-toast" aria-live="polite" aria-hidden="true">
+        <span class="icone-conquista"><i class="fa-solid fa-trophy"></i></span>
+        <div><small>Conquista desbloqueada</small><strong id="titulo-conquista-toast">Primeiro passo</strong><p id="texto-conquista-toast"></p></div>
+    </div>
+
+    <div id="modal-publicacao" class="modal" aria-hidden="true">
+        <div class="modal-conteudo" role="dialog" aria-modal="true" aria-labelledby="titulo-modal">
+            <button id="fechar-modal" class="fechar-modal" type="button" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+            <h2 id="titulo-modal">Criar publicação</h2>
+            <select id="tipo-publicacao" aria-label="Tipo de publicação">
+                <option value="Conquista">Conquista</option>
+                <option value="Projeto">Projeto</option>
+                <option value="Dúvida">Dúvida</option>
+                <option value="Oportunidade">Oportunidade</option>
+            </select>
+            <textarea id="texto-publicacao" placeholder="Compartilhe uma conquista, projeto ou dúvida..."></textarea>
+            <div class="acoes-modal">
+                <input id="imagem-publicacao" type="file" accept="image/*" hidden>
+                <button id="selecionar-imagem" class="botao-secundario" type="button"><i class="fa-regular fa-image"></i> Adicionar imagem</button>
+                <img id="preview-imagem" class="preview-imagem" alt="Prévia da imagem" hidden>
+            </div>
+            <button id="publicar" class="botao-publicar" type="button">Publicar</button>
+        </div>
+    </div>
+
+    <script src="js/interno.js"></script>
+</body>
+</html>

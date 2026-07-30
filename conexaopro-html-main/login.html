@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar | ConexãoPro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+    <main class="auth-layout">
+        <section class="auth-apresentacao">
+            <a class="marca" href="index.html" aria-label="Voltar para a página inicial">
+                <span class="marca-icone">CP</span>
+                <span>ConexãoPro</span>
+            </a>
+
+            <div>
+                <p class="eyebrow">Comunidade acadêmica SENAI</p>
+                <h1>Continue construindo seu futuro profissional.</h1>
+                <p class="descricao">Entre para acompanhar projetos, cursos, eventos e conexões da comunidade.</p>
+            </div>
+        </section>
+
+        <section class="auth-card" aria-labelledby="titulo-login">
+            <a class="voltar" href="index.html"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
+            <p class="eyebrow">Bem-vindo de volta</p>
+            <h2 id="titulo-login">Entrar no ConexãoPro</h2>
+
+            <form id="form-login" novalidate>
+                <label for="matricula">Matrícula</label>
+                <div class="campo">
+                    <i class="fa-regular fa-id-card"></i>
+                    <input id="matricula" name="matricula" type="text" inputmode="numeric" autocomplete="username" placeholder="Digite sua matrícula" required>
+                </div>
+
+                <label for="senha">Senha</label>
+                <div class="campo">
+                    <i class="fa-solid fa-lock"></i>
+                    <input id="senha" name="senha" type="password" autocomplete="current-password" placeholder="Digite sua senha" required>
+                    <button class="mostrar-senha" type="button" aria-label="Mostrar senha"><i class="fa-regular fa-eye"></i></button>
+                </div>
+
+                <p id="mensagem" class="mensagem" role="alert"></p>
+
+                <button class="botao-principal" type="submit">Entrar</button>
+            </form>
+
+            <p class="alternativa">Ainda não possui cadastro? <a href="cadastro.html">Criar conta</a></p>
+            <p class="aviso-mvp">MVP local para apresentação. A autenticação segura será conectada ao Supabase.</p>
+        </section>
+    </main>
+    <script src="js/auth.js"></script>
+</body>
+</html>
