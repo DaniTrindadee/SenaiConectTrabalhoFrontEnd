@@ -1,0 +1,26 @@
+node:events:498
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::3000
+    at Server.setupListenHandle [as _listen2] (node:net:1902:16)
+    at listenInCluster (node:net:1959:12)
+    at Server.listen (node:net:2061:7)
+    at Function.listen (c:\Users\NIT0316433\Desktop\SenaiConectTrabalhoFrontEnd-main\conexaopro-html-main\server\node_modules\express\lib\application.js:635:24)
+    at Object.<anonymous> (c:\Users\NIT0316433\Desktop\SenaiConectTrabalhoFrontEnd-main\conexaopro-html-main\server\server.js:401:5)
+    at Module._compile (node:internal/modules/cjs/loader:1546:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1691:10)
+    at Module.load (node:internal/modules/cjs/loader:1317:32)
+    at Module._load (node:internal/modules/cjs/loader:1127:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:315:14)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1938:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 3000
+}
+
+Node.js v22.7.0
