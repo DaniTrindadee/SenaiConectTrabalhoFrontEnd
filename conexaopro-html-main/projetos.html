@@ -369,8 +369,8 @@
             <div class="icone-topo" title="Mensagens"><i class="fa-regular fa-comment"></i></div>
             <div class="icone-topo" title="Notificações"><i class="fa-regular fa-bell"></i></div>
             <div class="usuario-topo">
-                <div class="avatar">EV</div>
-                <span>Everton</span>
+                <div class="avatar" id="avatar"></div>
+                <span id="nomeUsuario"></span>
             </div>
             <nav>
                 <a href="interno.html"><i class="Inicio1"></i><span>Início</span></a>
@@ -473,7 +473,21 @@
 
         </main>
     </div>
+    <script>const sessao = JSON.parse(localStorage.getItem("@conexaopro:sessao"));
 
+        if (sessao) {
+            document.getElementById("nomeUsuario").textContent = sessao.nome;
+
+            const iniciais = sessao.nome
+                .split(" ")
+                .map(p => p[0])
+                .join("")
+                .substring(0, 2)
+                .toUpperCase();
+
+            document.getElementById("avatar").textContent = iniciais;
+        }
+    </script>
 </body>
 
 </html>

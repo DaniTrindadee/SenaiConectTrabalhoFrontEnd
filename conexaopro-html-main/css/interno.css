@@ -176,9 +176,30 @@ textarea {
 
 .menu-lateral {
     height: max-content;
+    max-height: calc(100vh - 125px);
+    overflow-y: auto;
     padding: 20px;
     position: sticky;
-    top: 105px
+    top: 105px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.15) transparent
+}
+
+.menu-lateral::-webkit-scrollbar {
+    width: 5px
+}
+
+.menu-lateral::-webkit-scrollbar-track {
+    background: transparent
+}
+
+.menu-lateral::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.15);
+    border-radius: 99px
+}
+
+.menu-lateral::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.3)
 }
 
 .perfil-resumo {

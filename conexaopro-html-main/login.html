@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entrar | SenaiConnect</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="css/auth.css">
 </head>
+
 <body>
     <main class="auth-layout">
         <section class="auth-apresentacao">
             <a class="marca" href="index.html" aria-label="Voltar para a página inicial">
-                <span class="marca-icone">SC</span>
-                <span>SenaiConnect</span>
+                <img src="https://i.ibb.co/xqQp0Z7V/Chat-GPT-Image-30-de-jul-de-2026-11-08-57.png" class="Logo">
+                <span>Senai Connect</span>
             </a>
 
             <div>
@@ -34,14 +37,17 @@
                 <label for="matricula">Matrícula</label>
                 <div class="campo">
                     <i class="fa-regular fa-id-card"></i>
-                    <input id="matricula" name="matricula" type="text" inputmode="numeric" autocomplete="username" placeholder="Digite sua matrícula" required>
+                    <input id="matricula" name="matricula" type="text" inputmode="numeric" autocomplete="username"
+                        placeholder="Digite sua matrícula" required>
                 </div>
 
                 <label for="senha">Senha</label>
                 <div class="campo">
                     <i class="fa-solid fa-lock"></i>
-                    <input id="senha" name="senha" type="password" autocomplete="current-password" placeholder="Digite sua senha" required>
-                    <button class="mostrar-senha" type="button" aria-label="Mostrar senha"><i class="fa-regular fa-eye"></i></button>
+                    <input id="senha" name="senha" type="password" autocomplete="current-password"
+                        placeholder="Digite sua senha" required>
+                    <button class="mostrar-senha" type="button" aria-label="Mostrar senha"><i
+                            class="fa-regular fa-eye"></i></button>
                 </div>
 
                 <p id="mensagem" class="mensagem" role="alert"></p>
@@ -56,4 +62,5 @@
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
 </body>
+
 </html>

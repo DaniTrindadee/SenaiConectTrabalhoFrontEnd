@@ -1,4 +1,3 @@
-const CHAVE_SESSAO = "@conexaopro:sessao";
 const CHAVE_PUBLICACOES = "@conexaopro:publicacoes";
 const CHAVE_PERFIL_BASE = "@conexaopro:perfil";
 const CHAVE_PROGRESSO = "@conexaopro:progresso";
@@ -7,25 +6,77 @@ let sessao = null;
 let imagemSelecionada = "";
 let publicacaoEmEdicao = null;
 
-try {
-    sessao = JSON.parse(localStorage.getItem(CHAVE_SESSAO));
-} catch {
-    sessao = null;
-}
-
-// Cada usuário possui seu próprio perfil, identificado pela matrícula.
-const CHAVE_PERFIL = sessao?.matricula
-    ? `${CHAVE_PERFIL_BASE}:${sessao.matricula}`
-    : CHAVE_PERFIL_BASE;
-
-// Migra uma única vez o perfil da versão anterior para o usuário que está logado.
-if (sessao?.matricula && !localStorage.getItem(CHAVE_PERFIL)) {
-    const perfilAntigo = localStorage.getItem(CHAVE_PERFIL_BASE);
-    if (perfilAntigo) {
-        localStorage.setItem(CHAVE_PERFIL, perfilAntigo);
-        localStorage.removeItem(CHAVE_PERFIL_BASE);
+// ===== SESSÃO VIA API =====
+(async function inicializarSessao() {
+    sessao = getSessao();
+    if (!sessao) {
+        window.location.replace("login.html");
+        return;
     }
+
+    // Validar sessão com o backend
+    const usuario = await apiValidarSessao();
+    if (!usuario) {
+        // apiValidarSessao limpa os dados e retorna null se falhar (nunca lança exceção)
+        window.location.replace("login.html");
+        return;
+    }
+
+    sessao = getSessao(); // Atualizar dados com o retorno do backend
+
+    // Inicializar interface após validar sessão
+    inicializarInterface();
+})();
+
+function inicializarInterface() {
+    if (!sessao) return;
+
+    // Cada usuário possui seu próprio perfil, identificado pela matrícula.
+    const CHAVE_PERFIL = sessao?.matricula
+        ? `${CHAVE_PERFIL_BASE}:${sessao.matricula}`
+        : CHAVE_PERFIL_BASE;
+
+    // Migra uma única vez o perfil da versão anterior para o usuário que está logado.
+    if (sessao?.matricula && !localStorage.getItem(CHAVE_PERFIL)) {
+        const perfilAntigo = localStorage.getItem(CHAVE_PERFIL_BASE);
+        if (perfilAntigo) {
+            localStorage.setItem(CHAVE_PERFIL, perfilAntigo);
+            localStorage.removeItem(CHAVE_PERFIL_BASE);
+        }
+    }
+
+    const perfilSalvo = lerJSON(CHAVE_PERFIL, {});
+    const primeiroNome = sessao.nome.split(" ")[0];
+    const inicial = primeiroNome.charAt(0).toUpperCase();
+
+    document.querySelector("#nome-usuario").textContent = sessao.nome;
+    document.querySelector("#curso-usuario").textContent = sessao.curso;
+    document.querySelector("#primeiro-nome").textContent = primeiroNome;
+    document.querySelector("#nome-topo").textContent = primeiroNome;
+
+    ["#avatar", "#avatar-publicacao", "#avatar-topo"].forEach((seletor) => {
+        aplicarAvatar(
+            document.querySelector(seletor),
+            perfilSalvo.foto,
+            `Foto de ${sessao.nome}`,
+            inicial
+        );
+    });
+
+    // Sair
+    document.querySelector("#sair")?.addEventListener("click", async () => {
+        await apiSair();
+        window.location.href = "index.html";
+    });
+
+    // Carregar conexões na sidebar
+    carregarConexoesSidebar();
+
+    // ===== TODO O RESTO DO CÓDIGO EXISTENTE (publicações, comentários, notificações, etc.) =====
+    iniciarRestoDaInterface();
 }
+
+// ===== FUNÇÕES AUXILIARES (mantidas do original) =====
 
 function lerJSON(chave, fallback) {
     try {
@@ -36,8 +87,63 @@ function lerJSON(chave, fallback) {
     }
 }
 
+function salvarJSON(chave, valor) {
+    localStorage.setItem(chave, JSON.stringify(valor));
+}
 
+// ===== CONEXÕES NA SIDEBAR =====
 
+async function carregarConexoesSidebar() {
+    const container = document.querySelector("#sidebar-conexoes");
+    if (!container) return;
+
+    try {
+        const dados = await apiListarConexoes();
+        const conexoes = dados.aceitas || [];
+
+        if (conexoes.length === 0) {
+            container.innerHTML = `
+                <p style="font-size: 0.78rem; color: #6b7294; margin-bottom: 8px;">
+                    Você ainda não tem conexões.
+                </p>
+                <a href="conexoes.html" style="font-size: 0.75rem; color: #6c8cff; font-weight: 500;">
+                    Encontrar pessoas →
+                </a>
+            `;
+            return;
+        }
+
+        container.innerHTML = conexoes.slice(0, 5).map(conn => {
+            const inicial = conn.nome.charAt(0).toUpperCase();
+            return `
+                <a class="comunidade" href="perfil.html?id=${conn.usuario_id}">
+                    <span>${inicial}</span>
+                    <div>
+                        <strong>${conn.nome.split(" ")[0]}</strong>
+                        <small>${conn.curso || "Membro"}</small>
+                    </div>
+                </a>
+            `;
+        }).join("");
+
+        if (conexoes.length > 5) {
+            container.innerHTML += `
+                <a href="conexoes.html" style="display:block; margin-top:8px; font-size:0.75rem; color:#6c8cff; text-align:center;">
+                    +${conexoes.length - 5} outras conexões
+                </a>
+            `;
+        }
+    } catch (erro) {
+        console.error("Erro ao carregar conexões:", erro);
+        container.innerHTML = `
+            <p style="font-size: 0.78rem; color: #6b7294;">
+                Erro ao carregar conexões.
+            </p>
+        `;
+    }
+}
+
+// ===== CATÁLOGO DE CONQUISTAS =====
 const CATALOGO_CONQUISTAS = [
     { id: "primeiro-acesso", titulo: "Primeiro acesso", texto: "Você entrou na comunidade ConexãoPro.", icone: "fa-door-open" },
     { id: "primeira-publicacao", titulo: "Voz na comunidade", texto: "Sua primeira publicação foi criada.", icone: "fa-pen-to-square" },
@@ -46,10 +152,6 @@ const CATALOGO_CONQUISTAS = [
     { id: "perfil-completo", titulo: "Perfil em destaque", texto: "Foto e apresentação profissional adicionadas.", icone: "fa-id-card" },
     { id: "colaborador", titulo: "Colaborador ativo", texto: "Você chegou a cinco comentários na comunidade.", icone: "fa-people-group" }
 ];
-
-function salvarJSON(chave, valor) {
-    localStorage.setItem(chave, JSON.stringify(valor));
-}
 
 function obterProgresso() {
     return lerJSON(CHAVE_PROGRESSO, { conquistas: [], xpExtra: 0 });
@@ -190,33 +292,7 @@ function aplicarAvatar(elemento, foto, textoAlternativo, inicial) {
     }
 }
 
-const perfilSalvo = lerJSON(CHAVE_PERFIL, {});
-
-if (!sessao) {
-    window.location.replace("login.html");
-} else {
-    const primeiroNome = sessao.nome.split(" ")[0];
-    const inicial = primeiroNome.charAt(0).toUpperCase();
-
-    document.querySelector("#nome-usuario").textContent = sessao.nome;
-    document.querySelector("#curso-usuario").textContent = sessao.curso;
-    document.querySelector("#primeiro-nome").textContent = primeiroNome;
-    document.querySelector("#nome-topo").textContent = primeiroNome;
-
-    ["#avatar", "#avatar-publicacao", "#avatar-topo"].forEach((seletor) => {
-        aplicarAvatar(
-            document.querySelector(seletor),
-            perfilSalvo.foto,
-            `Foto de ${sessao.nome}`,
-            inicial
-        );
-    });
-}
-
-document.querySelector("#sair")?.addEventListener("click", () => {
-    localStorage.removeItem(CHAVE_SESSAO);
-    window.location.href = "index.html";
-});
+// ===== FUNÇÕES DE PUBLICAÇÃO (mantidas do original) =====
 
 const primeiraPublicacaoFixa = document.querySelector(".publicacao-fixa");
 const modal = document.querySelector("#modal-publicacao");
@@ -644,6 +720,7 @@ document.addEventListener("submit", (evento) => {
     }
 });
 
+// ===== NOTIFICAÇÕES =====
 
 const botaoNotificacoes = document.querySelector("#abrir-notificacoes");
 const painelNotificacoes = document.querySelector("#painel-notificacoes");
@@ -679,7 +756,14 @@ document.querySelector("#abrir-mensagens")?.addEventListener("click", () => {
     mostrarAviso("Mensagens estarão disponíveis na próxima sprint.");
 });
 
+// ===== INICIAR INTERFACE RESTANTE =====
+function iniciarRestoDaInterface() {
+    const perfilSalvo = lerJSON(
+        sessao?.matricula ? `${CHAVE_PERFIL_BASE}:${sessao.matricula}` : CHAVE_PERFIL_BASE,
+        {}
+    );
 
-renderizarPublicacoesSalvas();
-iniciarNotificacoes();
-verificarConquistas();
+    renderizarPublicacoesSalvas();
+    iniciarNotificacoes();
+    verificarConquistas();
+}

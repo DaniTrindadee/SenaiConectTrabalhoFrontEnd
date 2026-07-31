@@ -74,7 +74,6 @@
             font-family: inherit;
         }
 
-        /* ---------- HEADER ---------- */
         .topbar {
             position: relative;
             z-index: 20;
@@ -114,6 +113,11 @@
             align-items: center;
             gap: 14px;
             margin-left: auto;
+        }
+
+        .topbar-acoes a {
+            text-decoration: none;
+            color: inherit;
         }
 
         .icone-topo {
@@ -184,7 +188,22 @@
             font-weight: 700;
         }
 
-        /* ---------- LAYOUT MENSAGENS ---------- */
+        .btn-sair {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: var(--radius-pill);
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .btn-sair:hover {
+            color: var(--accent-red);
+            border-color: var(--accent-red);
+        }
+
         .chat-container {
             flex: 1;
             display: flex;
@@ -196,7 +215,6 @@
             overflow: hidden;
         }
 
-        /* --- Sidebar --- */
         .chat-sidebar {
             width: 350px;
             background: var(--bg-panel);
@@ -215,6 +233,32 @@
         .sidebar-header h2 {
             margin: 0 0 15px;
             font-size: 20px;
+        }
+
+        .sidebar-acoes {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .btn-nova-conversa {
+            background: var(--accent-blue-soft);
+            border: 1px solid rgba(37, 99, 235, 0.3);
+            color: var(--accent-blue);
+            padding: 8px 14px;
+            border-radius: var(--radius-pill);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-nova-conversa:hover {
+            background: var(--accent-blue);
+            color: white;
         }
 
         .busca-chat {
@@ -287,24 +331,6 @@
             font-size: 16px;
         }
 
-        .status-badge {
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: 2px solid var(--bg-panel);
-        }
-
-        .status-online {
-            background: var(--accent-green);
-        }
-
-        .status-offline {
-            background: var(--text-muted);
-        }
-
         .info-conversa {
             flex: 1;
             min-width: 0;
@@ -348,7 +374,6 @@
             margin-left: 5px;
         }
 
-        /* --- Chat Area --- */
         .chat-main {
             flex: 1;
             background: var(--bg-panel);
@@ -358,6 +383,32 @@
             flex-direction: column;
             overflow: hidden;
             position: relative;
+        }
+
+        .chat-placeholder {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            color: var(--text-muted);
+        }
+
+        .chat-placeholder i {
+            font-size: 64px;
+            opacity: 0.3;
+        }
+
+        .chat-placeholder h3 {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 20px;
+        }
+
+        .chat-placeholder p {
+            margin: 0;
+            font-size: 14px;
         }
 
         .chat-header {
@@ -386,21 +437,6 @@
             color: var(--accent-green);
         }
 
-        .header-acoes {
-            display: flex;
-            gap: 15px;
-            color: var(--text-secondary);
-        }
-
-        .header-acoes i {
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .header-acoes i:hover {
-            color: var(--text-primary);
-        }
-
         .mensagens-lista {
             flex: 1;
             overflow-y: auto;
@@ -418,22 +454,6 @@
         .mensagens-lista::-webkit-scrollbar-thumb {
             background: var(--border-subtle);
             border-radius: 10px;
-        }
-
-        .data-divisor {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 10px 0;
-        }
-
-        .data-divisor span {
-            background: var(--bg-panel-light);
-            padding: 4px 12px;
-            border-radius: var(--radius-pill);
-            font-size: 11px;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-subtle);
         }
 
         .mensagem {
@@ -489,7 +509,6 @@
             color: var(--accent-blue);
         }
 
-        /* --- Input Area --- */
         .chat-input-area {
             padding: 20px 25px;
             border-top: 1px solid var(--border-subtle);
@@ -522,29 +541,6 @@
             padding: 10px 0;
         }
 
-        .input-acoes {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn-acao-chat {
-            width: 38px;
-            height: 38px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: var(--radius-md);
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .btn-acao-chat:hover {
-            background: var(--bg-panel-light);
-            color: var(--text-primary);
-        }
-
         .btn-enviar {
             background: var(--accent-blue);
             color: white;
@@ -564,7 +560,134 @@
             transform: scale(1.05);
         }
 
-        /* ---------- RESPONSIVIDADE ---------- */
+        .btn-enviar:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Modal Nova Conversa */
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: none;
+            place-items: center;
+            padding: 20px;
+            background: rgba(2, 6, 23, 0.8);
+            backdrop-filter: blur(8px);
+        }
+
+        .modal.aberto {
+            display: grid;
+        }
+
+        .modal-conteudo {
+            width: min(480px, 100%);
+            max-height: 80vh;
+            padding: 28px;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            background: var(--bg-panel);
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+        }
+
+        .modal-conteudo h2 {
+            margin: 0 0 20px;
+            font-size: 20px;
+        }
+
+        .fechar-modal {
+            float: right;
+            width: 34px;
+            height: 34px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--bg-panel-light);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fechar-modal:hover {
+            color: var(--text-primary);
+        }
+
+        .lista-usuarios-modal {
+            display: grid;
+            gap: 4px;
+            margin-top: 10px;
+        }
+
+        .item-usuario-modal {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .item-usuario-modal:hover {
+            background: var(--accent-blue-soft);
+            border-color: rgba(37, 99, 235, 0.2);
+        }
+
+        .item-usuario-modal .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--bg-panel-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .item-usuario-modal .info {
+            flex: 1;
+        }
+
+        .item-usuario-modal .info strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .item-usuario-modal .info small {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .sem-conexoes {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .carregando {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+        }
+
+        .chat-header-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header-info small {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
         @media (max-width: 900px) {
             .chat-sidebar {
                 width: 80px;
@@ -599,237 +722,456 @@
 <body>
 
     <header class="topbar">
-        <div class="brand">
+        <a class="brand" href="interno.html">
             <div class="logo"><i class="fa-solid fa-graduation-cap"></i></div>
             <span>Senai Connect</span>
-        </div>
+        </a>
 
         <div class="topbar-acoes">
+            <a class="icone-topo" href="interno.html" title="Início">
+                <i class="fa-solid fa-house"></i>
+            </a>
             <div class="icone-topo ativo" title="Mensagens">
                 <i class="fa-regular fa-comment"></i>
-                <span class="badge">2</span>
+                <span class="badge" id="badge-nao-lidas" hidden>0</span>
             </div>
-            <div class="icone-topo" title="Notificações">
-                <i class="fa-regular fa-bell"></i>
+            <div class="usuario-topo" id="usuario-topo">
+                <div class="avatar" id="topo-avatar">A</div>
+                <span id="topo-nome">Carregando...</span>
             </div>
-            <div class="usuario-topo">
-                <div class="avatar">EV</div>
-                <span>Everton</span>
-            </div>
-            <nav>
-                <a href="interno.html"><i class="Inicio1"></i><span>Início</span></a>
-            </nav>
+            <button class="btn-sair" id="btn-sair">Sair</button>
         </div>
     </header>
 
     <div class="chat-container">
-        <!-- Sidebar de Conversas -->
         <aside class="chat-sidebar">
             <div class="sidebar-header">
                 <h2>Mensagens</h2>
+                <div class="sidebar-acoes">
+                    <button class="btn-nova-conversa" id="btn-nova-conversa">
+                        <i class="fa-solid fa-plus"></i> Nova conversa
+                    </button>
+                </div>
                 <div class="busca-chat">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Buscar conversa...">
+                    <input type="text" id="busca-conversa" placeholder="Buscar conversa...">
                 </div>
             </div>
             <div class="lista-conversas" id="lista-conversas">
-                <!-- Injetado via JS -->
+                <div class="carregando">Carregando conversas...</div>
             </div>
         </aside>
 
-        <!-- Área Principal do Chat -->
         <main class="chat-main">
-            <div class="chat-header" id="chat-header">
+            <div class="chat-placeholder" id="chat-placeholder">
+                <i class="fa-regular fa-comment-dots"></i>
+                <h3>Suas mensagens</h3>
+                <p>Selecione uma conversa ou inicie uma nova.</p>
+            </div>
+
+            <div class="chat-header" id="chat-header" hidden>
                 <div class="header-usuario">
-                    <div class="avatar-conversa" id="header-avatar"
-                        style="background: linear-gradient(135deg, #22C55E, #166534);">JD</div>
+                    <div class="avatar-conversa" id="header-avatar">A</div>
                     <div class="header-info">
-                        <h3 id="header-nome">João Dutra</h3>
-                        <span id="header-status">online</span>
+                        <h3 id="header-nome">Carregando...</h3>
+                        <div class="chat-header-info">
+                            <span id="header-status">conectado</span>
+                            <small id="header-curso"></small>
+                        </div>
                     </div>
-                </div>
-                <div class="header-acoes">
-                    <i class="fa-solid fa-phone" title="Chamada de Voz"></i>
-                    <i class="fa-solid fa-video" title="Chamada de Vídeo"></i>
-                    <i class="fa-solid fa-ellipsis-vertical" title="Mais opções"></i>
                 </div>
             </div>
 
-            <div class="mensagens-lista" id="mensagens-lista">
-                <div class="data-divisor"><span>Hoje</span></div>
-
-                <div class="mensagem recebida">
-                    <div class="balao">
-                        Olá Everton! Vi seu projeto de HTML/CSS no Senai Connect. Ficou excelente!
-                    </div>
-                    <div class="mensagem-info">09:41</div>
-                </div>
-
-                <div class="mensagem enviada">
-                    <div class="balao">
-                        Muito obrigado, João! Deu bastante trabalho para ajustar o tema dark, mas gostei do resultado.
-                    </div>
-                    <div class="mensagem-info">09:45 <i class="fa-solid fa-check-double check-lido"></i></div>
-                </div>
-
-                <div class="mensagem recebida">
-                    <div class="balao">
-                        Com certeza valeu a pena. Você pretende adicionar um painel de mensagens nele também?
-                    </div>
-                    <div class="mensagem-info">09:46</div>
-                </div>
+            <div class="mensagens-lista" id="mensagens-lista" hidden>
             </div>
 
-            <div class="chat-input-area">
+            <div class="chat-input-area" id="chat-input-area" hidden>
                 <form class="input-wrapper" id="chat-form">
-                    <div class="btn-acao-chat"><i class="fa-solid fa-plus"></i></div>
-                    <input type="text" id="chat-input" placeholder="Digite sua mensagem..." autocomplete="off">
-                    <div class="input-acoes">
-                        <div class="btn-acao-chat"><i class="fa-regular fa-face-smile"></i></div>
-                        <button type="submit" class="btn-enviar">
-                            <i class="fa-solid fa-paper-plane"></i>
-                        </button>
-                    </div>
+                    <input type="text" id="chat-input" placeholder="Digite sua mensagem..." autocomplete="off" required>
+                    <button type="submit" class="btn-enviar" id="btn-enviar">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
                 </form>
             </div>
         </main>
     </div>
 
+    <!-- Modal Nova Conversa -->
+    <div class="modal" id="modal-nova-conversa">
+        <div class="modal-conteudo">
+            <button class="fechar-modal" id="fechar-modal">&times;</button>
+            <h2>Nova conversa</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">
+                Selecione um usuário para iniciar uma conversa:
+            </p>
+            <div class="lista-usuarios-modal" id="lista-usuarios-modal">
+                <div class="carregando">Carregando usuários...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
     <script>
-        const CONVERSAS = [
-            {
-                id: 1,
-                nome: "João Dutra",
-                avatar: "JD",
-                cor: "linear-gradient(135deg, #22C55E, #166534)",
-                ultimaMsg: "Você pretende adicionar um painel...",
-                hora: "09:46",
-                online: true,
-                unread: 0
-            },
-            {
-                id: 2,
-                nome: "Maria Silva",
-                avatar: "MS",
-                cor: "linear-gradient(135deg, #EC4899, #9D174D)",
-                ultimaMsg: "Pode me ajudar com o React?",
-                hora: "Ontem",
-                online: false,
-                unread: 2
-            },
-            {
-                id: 3,
-                nome: "Grupo de Estudos Python",
-                avatar: "PY",
-                cor: "linear-gradient(135deg, #3B82F6, #1D4ED8)",
-                ultimaMsg: "Everton: O link da aula está aqui.",
-                hora: "Ontem",
-                online: true,
-                unread: 0
-            },
-            {
-                id: 4,
-                nome: "Ricardo Santos",
-                avatar: "RS",
-                cor: "linear-gradient(135deg, #F59E0B, #B45309)",
-                ultimaMsg: "Obrigado pelo feedback!",
-                hora: "Segunda",
-                online: false,
-                unread: 0
+        // ===== ESTADO GLOBAL =====
+        let sessao = null;
+        let conversas = [];
+        let conversaAtiva = null; // { usuario_id, nome }
+        let usuariosDisponiveis = [];
+        let intervaloAtualizacao = null;
+
+        // ===== INICIALIZAÇÃO =====
+        (async function inicializar() {
+            sessao = getSessao();
+            if (!sessao) {
+                window.location.replace("login.html");
+                return;
             }
-        ];
+
+            // Validar sessão
+            const usuario = await apiValidarSessao();
+            if (!usuario) {
+                window.location.replace("login.html");
+                return;
+            }
+            sessao = getSessao();
+
+            // Preencher header
+            const inicial = sessao.nome.charAt(0).toUpperCase();
+            document.getElementById('topo-avatar').textContent = inicial;
+            document.getElementById('topo-nome').textContent = sessao.nome.split(' ')[0];
+
+            // Carregar conversas
+            await carregarConversas();
+
+            // Iniciar polling a cada 5s
+            intervaloAtualizacao = setInterval(() => {
+                if (conversaAtiva) {
+                    carregarMensagens(conversaAtiva.usuario_id, false);
+                }
+                carregarConversas(true);
+            }, 5000);
+
+            // Event listeners
+            document.getElementById('btn-sair').addEventListener('click', async () => {
+                await apiSair();
+                window.location.href = 'index.html';
+            });
+
+            document.getElementById('chat-form').addEventListener('submit', enviarMensagem);
+
+            document.getElementById('btn-nova-conversa').addEventListener('click', abrirModalNovaConversa);
+            document.getElementById('fechar-modal').addEventListener('click', () => {
+                document.getElementById('modal-nova-conversa').classList.remove('aberto');
+            });
+            document.getElementById('modal-nova-conversa').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) {
+                    document.getElementById('modal-nova-conversa').classList.remove('aberto');
+                }
+            });
+
+            document.getElementById('busca-conversa').addEventListener('input', filtrarConversas);
+        })();
+
+        // ===== CONVERSAS =====
+        async function carregarConversas(silencioso = false) {
+            try {
+                const dados = await apiListarConversas();
+                if (!Array.isArray(dados)) return;
+
+                const idsAtivos = new Set(conversas.map(c => c.usuario_id));
+                const novosIds = new Set(dados.map(c => c.usuario_id));
+
+                // Só re-renderizar se houver mudança
+                if (silencioso && idsAtivos.size === novosIds.size) {
+                    let mudou = false;
+                    for (const id of idsAtivos) {
+                        if (!novosIds.has(id)) { mudou = true; break; }
+                    }
+                    if (!mudou) {
+                        // Atualizar apenas o badge de não lidas
+                        const totalNaoLidas = dados.reduce((acc, c) => acc + (c.nao_lidas || 0), 0);
+                        const badge = document.getElementById('badge-nao-lidas');
+                        badge.textContent = totalNaoLidas;
+                        badge.hidden = totalNaoLidas === 0;
+                        return;
+                    }
+                }
+
+                conversas = dados;
+                renderizarConversas();
+            } catch (erro) {
+                if (!silencioso) {
+                    console.error('Erro ao carregar conversas:', erro);
+                }
+            }
+        }
 
         function renderizarConversas() {
             const lista = document.getElementById('lista-conversas');
-            lista.innerHTML = '';
 
-            CONVERSAS.forEach(c => {
-                const item = document.createElement('div');
-                item.className = `item-conversa ${c.id === 1 ? 'ativo' : ''}`;
-                item.onclick = () => selecionarConversa(c.id);
-
-                item.innerHTML = `
-                    <div class="avatar-conversa" style="background: ${c.cor}">
-                        ${c.avatar}
-                        <div class="status-badge ${c.online ? 'status-online' : 'status-offline'}"></div>
+            if (conversas.length === 0) {
+                lista.innerHTML = `
+                    <div class="sem-conexoes">
+                        <p style="margin-bottom: 8px;">Nenhuma conversa ainda.</p>
+                        <p style="font-size: 12px;">Clique em "Nova conversa" para começar.</p>
                     </div>
-                    <div class="info-conversa">
-                        <div class="topo-conversa">
-                            <span class="nome-conversa">${c.nome}</span>
-                            <span class="hora-conversa">${c.hora}</span>
-                        </div>
-                        <div class="topo-conversa">
-                            <span class="previa-conversa">${c.ultimaMsg}</span>
-                            ${c.unread > 0 ? `<span class="unread-badge">${c.unread}</span>` : ''}
+                `;
+                return;
+            }
+
+            const totalNaoLidas = conversas.reduce((acc, c) => acc + (c.nao_lidas || 0), 0);
+            const badge = document.getElementById('badge-nao-lidas');
+            badge.textContent = totalNaoLidas;
+            badge.hidden = totalNaoLidas === 0;
+
+            lista.innerHTML = conversas.map(c => {
+                const ativo = conversaAtiva && c.usuario_id === conversaAtiva.usuario_id;
+                const inicial = c.nome.charAt(0).toUpperCase();
+                const hora = c.ultimo_tempo ? formatarHora(c.ultimo_tempo) : '';
+                const preview = c.ultima_mensagem || 'Clique para iniciar conversa';
+                const unread = c.nao_lidas || 0;
+
+                return `
+                    <div class="item-conversa ${ativo ? 'ativo' : ''}" data-id="${c.usuario_id}" onclick="selecionarConversa(${c.usuario_id}, '${c.nome.replace(/'/g, "\\'")}')">
+                        <div class="avatar-conversa">${inicial}</div>
+                        <div class="info-conversa">
+                            <div class="topo-conversa">
+                                <span class="nome-conversa">${c.nome}</span>
+                                <span class="hora-conversa">${hora}</span>
+                            </div>
+                            <div class="topo-conversa">
+                                <span class="previa-conversa">${preview}</span>
+                                ${unread > 0 ? `<span class="unread-badge">${unread}</span>` : ''}
+                            </div>
                         </div>
                     </div>
                 `;
-                lista.appendChild(item);
+            }).join('');
+        }
+
+        function filtrarConversas() {
+            const termo = document.getElementById('busca-conversa').value.toLowerCase().trim();
+            const itens = document.querySelectorAll('.item-conversa');
+
+            itens.forEach(item => {
+                const nome = item.querySelector('.nome-conversa')?.textContent?.toLowerCase() || '';
+                item.style.display = nome.includes(termo) ? 'flex' : 'none';
             });
         }
 
-        function selecionarConversa(id) {
+        // ===== MENSAGENS =====
+        async function selecionarConversa(usuarioId, nome) {
+            conversaAtiva = { usuario_id: usuarioId, nome };
+
+            // Atualizar UI
             document.querySelectorAll('.item-conversa').forEach(el => el.classList.remove('ativo'));
-            event.currentTarget.classList.add('ativo');
+            const item = document.querySelector(`.item-conversa[data-id="${usuarioId}"]`);
+            if (item) item.classList.add('ativo');
 
-            const conversa = CONVERSAS.find(c => c.id === id);
-            document.getElementById('header-nome').innerText = conversa.nome;
-            document.getElementById('header-avatar').innerText = conversa.avatar;
-            document.getElementById('header-avatar').style.background = conversa.cor;
-            document.getElementById('header-status').innerText = conversa.online ? 'online' : 'visto por último recentemente';
-            document.getElementById('header-status').style.color = conversa.online ? 'var(--accent-green)' : 'var(--text-muted)';
+            document.getElementById('chat-placeholder').hidden = true;
+            document.getElementById('chat-header').hidden = false;
+            document.getElementById('mensagens-lista').hidden = false;
+            document.getElementById('chat-input-area').hidden = false;
 
-            // Simular troca de mensagens (limpar e colocar placeholder)
-            const listaMsg = document.getElementById('mensagens-lista');
-            listaMsg.innerHTML = `<div class="data-divisor"><span>Histórico com ${conversa.nome}</span></div>`;
+            document.getElementById('header-nome').textContent = nome;
+            document.getElementById('header-avatar').textContent = nome.charAt(0).toUpperCase();
+            document.getElementById('header-status').textContent = 'conectado';
+            document.getElementById('header-curso').textContent = '';
+
+            // Buscar dados do usuário e curso
+            try {
+                const usuario = await apiBuscarUsuario(usuarioId);
+                if (usuario && usuario.curso) {
+                    document.getElementById('header-curso').textContent = usuario.curso;
+                }
+            } catch { }
+
+            document.getElementById('chat-input').focus();
+
+            await carregarMensagens(usuarioId);
         }
 
-        // Enviar Mensagem
-        const chatForm = document.getElementById('chat-form');
-        const chatInput = document.getElementById('chat-input');
-        const mensagensLista = document.getElementById('mensagens-lista');
+        async function carregarMensagens(usuarioId, scrollToBottom = true) {
+            try {
+                const mensagens = await apiBuscarMensagens(usuarioId);
+                const lista = document.getElementById('mensagens-lista');
 
-        chatForm.addEventListener('submit', (e) => {
+                if (mensagens.length === 0) {
+                    lista.innerHTML = `
+                        <div style="text-align: center; color: var(--text-muted); padding: 40px 20px; font-size: 14px;">
+                            Nenhuma mensagem ainda. Envie algo para iniciar a conversa!
+                        </div>
+                    `;
+                    return;
+                }
+
+                lista.innerHTML = mensagens.map(m => {
+                    const enviada = m.remetente_id === sessao.id;
+                    const hora = formatarHora(m.criado_em);
+                    const check = m.lida ? 'fa-check-double check-lido' : 'fa-check';
+
+                    return `
+                        <div class="mensagem ${enviada ? 'enviada' : 'recebida'}">
+                            <div class="balao">${escaparHTML(m.mensagem)}</div>
+                            <div class="mensagem-info">
+                                ${hora}
+                                ${enviada ? `<i class="fa-solid ${check}"></i>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                if (scrollToBottom) {
+                    lista.scrollTop = lista.scrollHeight;
+                }
+            } catch (erro) {
+                console.error('Erro ao carregar mensagens:', erro);
+            }
+        }
+
+        async function enviarMensagem(e) {
             e.preventDefault();
-            const texto = chatInput.value.trim();
+            const input = document.getElementById('chat-input');
+            const texto = input.value.trim();
 
-            if (texto) {
-                const agora = new Date();
-                const hora = agora.getHours().toString().padStart(2, '0') + ':' + agora.getMinutes().toString().padStart(2, '0');
+            if (!texto || !conversaAtiva) return;
+
+            const btn = document.getElementById('btn-enviar');
+            btn.disabled = true;
+
+            try {
+                await apiEnviarMensagem(conversaAtiva.usuario_id, texto);
+                input.value = '';
+
+                // Adicionar mensagem na lista imediatamente
+                const lista = document.getElementById('mensagens-lista');
+                const hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
                 const msgHtml = `
                     <div class="mensagem enviada">
-                        <div class="balao">${texto}</div>
+                        <div class="balao">${escaparHTML(texto)}</div>
                         <div class="mensagem-info">${hora} <i class="fa-solid fa-check"></i></div>
                     </div>
                 `;
 
-                mensagensLista.insertAdjacentHTML('beforeend', msgHtml);
-                chatInput.value = '';
-                mensagensLista.scrollTop = mensagensLista.scrollHeight;
+                // Remover placeholder se existir
+                const placeholder = lista.querySelector('div[style*="text-align: center"]');
+                if (placeholder) placeholder.remove();
 
-                // Simular resposta automática após 1s
-                setTimeout(() => {
-                    const respostaHtml = `
-                        <div class="mensagem recebida">
-                            <div class="balao">Entendido! Vou verificar isso agora mesmo.</div>
-                            <div class="mensagem-info">${hora}</div>
+                lista.insertAdjacentHTML('beforeend', msgHtml);
+                lista.scrollTop = lista.scrollHeight;
+
+                // Recarregar conversas para atualizar sidebar
+                await carregarConversas(true);
+            } catch (erro) {
+                console.error('Erro ao enviar mensagem:', erro);
+                alert('Erro ao enviar mensagem. Tente novamente.');
+            } finally {
+                btn.disabled = false;
+                input.focus();
+            }
+        }
+
+        // ===== NOVA CONVERSA =====
+        async function abrirModalNovaConversa() {
+            const modal = document.getElementById('modal-nova-conversa');
+            const lista = document.getElementById('lista-usuarios-modal');
+            modal.classList.add('aberto');
+            lista.innerHTML = '<div class="carregando">Carregando usuários...</div>';
+
+            try {
+                // Carregar conexões e usuários
+                let usuarios = [];
+
+                try {
+                    const dadosConexoes = await apiListarConexoes();
+                    const aceitas = dadosConexoes.aceitas || [];
+                    aceitas.forEach(c => {
+                        if (c.usuario_id !== sessao.id) {
+                            usuarios.push({
+                                id: c.usuario_id,
+                                nome: c.nome,
+                                curso: c.curso || 'Conectado(a)'
+                            });
+                        }
+                    });
+                } catch { }
+
+                // Também carregar todos os usuários
+                try {
+                    const todos = await apiListarUsuarios();
+                    todos.forEach(u => {
+                        if (u.id !== sessao.id && !usuarios.find(us => us.id === u.id)) {
+                            usuarios.push({
+                                id: u.id,
+                                nome: u.nome,
+                                curso: u.curso || 'Membro'
+                            });
+                        }
+                    });
+                } catch { }
+
+                usuariosDisponiveis = usuarios;
+
+                if (usuarios.length === 0) {
+                    lista.innerHTML = `
+                        <div class="sem-conexoes">
+                            <p>Nenhum usuário disponível para conversar.</p>
+                            <p style="font-size: 12px; margin-top: 8px;">Conecte-se com outras pessoas primeiro!</p>
                         </div>
                     `;
-                    mensagensLista.insertAdjacentHTML('beforeend', respostaHtml);
-                    mensagensLista.scrollTop = mensagensLista.scrollHeight;
+                    return;
+                }
 
-                    // Atualizar check de lido na msg enviada
-                    const checks = mensagensLista.querySelectorAll('.enviada .fa-check');
-                    if (checks.length > 0) {
-                        const ultimoCheck = checks[checks.length - 1];
-                        ultimoCheck.className = 'fa-solid fa-check-double check-lido';
-                    }
-                }, 1500);
+                lista.innerHTML = usuarios.map(u => {
+                    const inicial = u.nome.charAt(0).toUpperCase();
+                    return `
+                        <div class="item-usuario-modal" onclick="iniciarConversa(${u.id}, '${u.nome.replace(/'/g, "\\'")}')">
+                            <div class="avatar">${inicial}</div>
+                            <div class="info">
+                                <strong>${u.nome}</strong>
+                                <small>${u.curso}</small>
+                            </div>
+                            <i class="fa-solid fa-chevron-right" style="color: var(--text-muted); font-size: 12px;"></i>
+                        </div>
+                    `;
+                }).join('');
+            } catch (erro) {
+                console.error('Erro ao carregar usuários:', erro);
+                lista.innerHTML = '<div class="sem-conexoes">Erro ao carregar usuários.</div>';
             }
-        });
+        }
 
-        renderizarConversas();
+        function iniciarConversa(usuarioId, nome) {
+            document.getElementById('modal-nova-conversa').classList.remove('aberto');
+            conversaAtiva = { usuario_id: usuarioId, nome };
+            selecionarConversa(usuarioId, nome);
+        }
+
+        // ===== UTILITÁRIOS =====
+        function formatarHora(dataISO) {
+            if (!dataISO) return '';
+            const data = new Date(dataISO + 'Z');
+            const agora = new Date();
+            const diff = agora - data;
+            const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+            if (dias === 0) {
+                return data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            } else if (dias === 1) {
+                return 'Ontem';
+            } else if (dias < 7) {
+                return data.toLocaleDateString('pt-BR', { weekday: 'short' });
+            } else {
+                return data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+            }
+        }
+
+        function escaparHTML(texto) {
+            const div = document.createElement('div');
+            div.textContent = texto ?? '';
+            return div.innerHTML;
+        }
     </script>
 </body>
 
