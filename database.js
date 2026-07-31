@@ -19,6 +19,24 @@ function conectar() {
     db.pragma("foreign_keys = ON");
 
     criarTabelas();
+
+// Migração: adicionar coluna 'tipo' se não existir (para bancos já criados)
+    try {
+        db.exec("ALTER TABLE usuarios ADD COLUMN tipo TEXT NOT NULL DEFAULT 'aluno'");
+    } catch {
+        // Coluna já existe, ignorar
+    }
+
+    // Seed: criar admin padrão se não existir
+    const adminExistente = db.prepare("SELECT id FROM usuarios WHERE matricula = ?").get("admin");
+    if (!adminExistente) {
+        db.prepare(`
+            INSERT INTO usuarios (nome, matricula, curso, senha, tipo)
+            VALUES (?, ?, ?, ?, ?)
+        `).run("Administrador Master", "admin", "Administração", "admin123", "admin");
+        console.log("✅ Admin padrão criado (matrícula: admin, senha: admin123)");
+    }
+
     return db;
 }
 
@@ -31,6 +49,7 @@ function criarTabelas() {
             matricula TEXT NOT NULL UNIQUE,
             curso TEXT NOT NULL DEFAULT '',
             senha TEXT NOT NULL,
+            tipo TEXT NOT NULL DEFAULT 'aluno' CHECK(tipo IN ('aluno', 'professor', 'admin')),
             foto TEXT DEFAULT '',
             sobre TEXT DEFAULT '',
             xp INTEGER DEFAULT 0,

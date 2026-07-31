@@ -26,7 +26,8 @@ function gerarToken() {
 function validarSessao(token) {
     if (!token) return null;
     const sessao = db.prepare(`
-        SELECT s.*, u.nome, u.matricula, u.curso, u.foto, u.sobre, u.nivel, u.xp
+        SELECT u.id, u.nome, u.matricula, u.curso, u.foto, u.sobre, u.nivel, u.xp, u.tipo,
+               s.token, s.criado_em, s.expira_em, s.usuario_id
         FROM sessoes s
         JOIN usuarios u ON s.usuario_id = u.id
         WHERE s.token = ? AND s.expira_em > datetime('now')
@@ -41,6 +42,13 @@ function authMiddleware(req, res, next) {
         return res.status(401).json({ erro: "Sessão inválida ou expirada." });
     }
     req.usuario = sessao;
+    next();
+}
+
+function adminMiddleware(req, res, next) {
+    if (req.usuario.tipo !== 'admin') {
+        return res.status(403).json({ erro: "Apenas administradores podem acessar esta funcionalidade." });
+    }
     next();
 }
 
@@ -393,6 +401,236 @@ app.delete("/api/conexoes/:id", authMiddleware, (req, res) => {
     } catch (erro) {
         console.error("Erro ao remover conexão:", erro);
         res.status(500).json({ erro: "Erro ao remover conexão." });
+    }
+});
+
+// ===== ROTAS ADMIN =====
+
+// Login do administrador
+app.post("/api/admin/login", (req, res) => {
+    try {
+        const { matricula, senha } = req.body;
+
+        if (!matricula?.trim() || !senha) {
+            return res.status(400).json({ erro: "Matrícula e senha são obrigatórios." });
+        }
+
+        const usuario = db.prepare("SELECT * FROM usuarios WHERE matricula = ? AND tipo = 'admin'").get(matricula.trim());
+        if (!usuario || usuario.senha !== senha) {
+            return res.status(401).json({ erro: "Credenciais de administrador inválidas." });
+        }
+
+        // Criar nova sessão
+        const token = gerarToken();
+        const expiraEm = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+        db.prepare("INSERT INTO sessoes (usuario_id, token, expira_em) VALUES (?, ?, ?)").run(usuario.id, token, expiraEm);
+
+        res.json({
+            mensagem: "Login admin realizado!",
+            token,
+            usuario: {
+                id: usuario.id,
+                nome: usuario.nome,
+                matricula: usuario.matricula,
+                tipo: usuario.tipo
+            }
+        });
+    } catch (erro) {
+        console.error("Erro no login admin:", erro);
+        res.status(500).json({ erro: "Erro interno ao realizar login admin." });
+    }
+});
+
+// Estatísticas do dashboard
+app.get("/api/admin/estatisticas", authMiddleware, adminMiddleware, (req, res) => {
+    try {
+        const totalAlunos = db.prepare("SELECT COUNT(*) as total FROM usuarios WHERE tipo = 'aluno'").get().total;
+        const totalProfessores = db.prepare("SELECT COUNT(*) as total FROM usuarios WHERE tipo = 'professor'").get().total;
+        const totalUsuarios = db.prepare("SELECT COUNT(*) as total FROM usuarios WHERE tipo != 'admin'").get().total;
+        const totalConexoes = db.prepare("SELECT COUNT(*) as total FROM conexoes WHERE status = 'aceita'").get().total;
+        const totalPendentes = db.prepare("SELECT COUNT(*) as total FROM conexoes WHERE status = 'pendente'").get().total;
+
+        res.json({
+            totalAlunos,
+            totalProfessores,
+            totalUsuarios,
+            totalConexoes,
+            totalPendentes
+        });
+    } catch (erro) {
+        console.error("Erro ao buscar estatísticas:", erro);
+        res.status(500).json({ erro: "Erro ao buscar estatísticas." });
+    }
+});
+
+// Listar todos os usuários (admin)
+app.get("/api/admin/usuarios", authMiddleware, adminMiddleware, (req, res) => {
+    try {
+        const { tipo } = req.query;
+        let query = "SELECT id, nome, matricula, curso, tipo, criado_em FROM usuarios WHERE tipo != 'admin'";
+        const params = [];
+
+        if (tipo && ['aluno', 'professor'].includes(tipo)) {
+            query += " AND tipo = ?";
+            params.push(tipo);
+        }
+
+        query += " ORDER BY criado_em DESC";
+        const usuarios = db.prepare(query).all(...params);
+
+        res.json(usuarios);
+    } catch (erro) {
+        console.error("Erro ao listar usuários admin:", erro);
+        res.status(500).json({ erro: "Erro ao listar usuários." });
+    }
+});
+
+// Cadastrar usuário (admin cria matrícula de aluno ou professor)
+app.post("/api/admin/usuarios", authMiddleware, adminMiddleware, (req, res) => {
+    try {
+        const { nome, matricula, curso, senha, tipo } = req.body;
+
+        if (!nome?.trim() || !matricula?.trim() || !senha || !tipo) {
+            return res.status(400).json({ erro: "Preencha todos os campos obrigatórios." });
+        }
+
+        if (!['aluno', 'professor'].includes(tipo)) {
+            return res.status(400).json({ erro: "Tipo inválido. Use 'aluno' ou 'professor'." });
+        }
+
+        if (senha.length < 4) {
+            return res.status(400).json({ erro: "A senha precisa ter pelo menos 4 caracteres." });
+        }
+
+        // Verificar se matrícula já existe
+        const existente = db.prepare("SELECT id FROM usuarios WHERE matricula = ?").get(matricula.trim());
+        if (existente) {
+            return res.status(409).json({ erro: "Esta matrícula já está cadastrada." });
+        }
+
+        // Inserir usuário
+        const resultado = db.prepare(`
+            INSERT INTO usuarios (nome, matricula, curso, senha, tipo)
+            VALUES (?, ?, ?, ?, ?)
+        `).run(nome.trim(), matricula.trim(), curso || "", senha, tipo);
+
+        res.status(201).json({
+            mensagem: `${tipo === 'aluno' ? 'Aluno' : 'Professor'} cadastrado com sucesso!`,
+            usuario: {
+                id: resultado.lastInsertRowid,
+                nome: nome.trim(),
+                matricula: matricula.trim(),
+                curso: curso || "",
+                tipo
+            }
+        });
+    } catch (erro) {
+        console.error("Erro ao cadastrar usuário admin:", erro);
+        res.status(500).json({ erro: "Erro interno ao cadastrar usuário." });
+    }
+});
+
+// Editar usuário
+app.put("/api/admin/usuarios/:id", authMiddleware, adminMiddleware, (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nome, matricula, curso, senha, tipo } = req.body;
+
+        const usuario = db.prepare("SELECT * FROM usuarios WHERE id = ?").get(id);
+        if (!usuario) {
+            return res.status(404).json({ erro: "Usuário não encontrado." });
+        }
+
+        if (usuario.tipo === 'admin') {
+            return res.status(403).json({ erro: "Não é possível editar administradores." });
+        }
+
+        const updates = [];
+        const params = [];
+
+        if (nome?.trim()) {
+            updates.push("nome = ?");
+            params.push(nome.trim());
+        }
+        if (matricula?.trim()) {
+            // Verificar se matrícula já existe (exceto a do próprio usuário)
+            const existente = db.prepare("SELECT id FROM usuarios WHERE matricula = ? AND id != ?").get(matricula.trim(), id);
+            if (existente) {
+                return res.status(409).json({ erro: "Esta matrícula já está em uso." });
+            }
+            updates.push("matricula = ?");
+            params.push(matricula.trim());
+        }
+        if (curso !== undefined) {
+            updates.push("curso = ?");
+            params.push(curso);
+        }
+        if (senha) {
+            if (senha.length < 4) {
+                return res.status(400).json({ erro: "A senha precisa ter pelo menos 4 caracteres." });
+            }
+            updates.push("senha = ?");
+            params.push(senha);
+        }
+        if (tipo && ['aluno', 'professor'].includes(tipo)) {
+            updates.push("tipo = ?");
+            params.push(tipo);
+        }
+
+        if (updates.length === 0) {
+            return res.status(400).json({ erro: "Nenhum campo para atualizar." });
+        }
+
+        updates.push("atualizado_em = datetime('now')");
+        params.push(id);
+
+        db.prepare(`UPDATE usuarios SET ${updates.join(", ")} WHERE id = ?`).run(...params);
+
+        res.json({ mensagem: "Usuário atualizado com sucesso!" });
+    } catch (erro) {
+        console.error("Erro ao editar usuário:", erro);
+        res.status(500).json({ erro: "Erro ao editar usuário." });
+    }
+});
+
+// Excluir usuário
+app.delete("/api/admin/usuarios/:id", authMiddleware, adminMiddleware, (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const usuario = db.prepare("SELECT * FROM usuarios WHERE id = ?").get(id);
+        if (!usuario) {
+            return res.status(404).json({ erro: "Usuário não encontrado." });
+        }
+
+        if (usuario.tipo === 'admin') {
+            return res.status(403).json({ erro: "Não é possível excluir administradores." });
+        }
+
+        // Excluir sessões e conexões do usuário (CASCADE deve cuidar disso)
+        db.prepare("DELETE FROM usuarios WHERE id = ?").run(id);
+
+        res.json({ mensagem: "Usuário excluído com sucesso!" });
+    } catch (erro) {
+        console.error("Erro ao excluir usuário:", erro);
+        res.status(500).json({ erro: "Erro ao excluir usuário." });
+    }
+});
+
+// Listar matrículas ativas (para testar login)
+app.get("/api/admin/matriculas", authMiddleware, adminMiddleware, (req, res) => {
+    try {
+        const matriculas = db.prepare(`
+            SELECT id, nome, matricula, tipo, curso, senha
+            FROM usuarios
+            WHERE tipo IN ('aluno', 'professor')
+            ORDER BY tipo, nome ASC
+        `).all();
+
+        res.json(matriculas);
+    } catch (erro) {
+        console.error("Erro ao listar matrículas:", erro);
+        res.status(500).json({ erro: "Erro ao listar matrículas." });
     }
 });
 
