@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conexões | Senai Connect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/interno.css">
+    <style>
+        .conexoes-layout {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px 28px;
+        }
+
+        .conexoes-header {
+            margin-bottom: 24px;
+        }
+        .conexoes-header h1 {
+            color: #fff;
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+        .conexoes-header p {
+            color: #6b7294;
+            font-size: 0.88rem;
+        }
+
+        .conexoes-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .conexoes-tab {
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(108, 140, 255, 0.15);
+            background: transparent;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #8a92b0;
+        }
+        .conexoes-tab:hover {
+            border-color: #6c8cff;
+            color: #c0c8e8;
+        }
+        .conexoes-tab.ativo {
+            background: #6c8cff;
+            color: #fff;
+            border-color: #6c8cff;
+        }
+
+        .busca-usuarios {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #111638;
+            border: 1px solid rgba(108, 140, 255, 0.12);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            color: #6b7294;
+        }
+        .busca-usuarios i { color: #6b7294; }
+        .busca-usuarios input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: #b8c0d8;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.88rem;
+        }
+        .busca-usuarios input::placeholder { color: #505a80; }
+
+        .card-usuario {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: #111638;
+            border: 1px solid rgba(108, 140, 255, 0.1);
+            border-radius: 14px;
+            padding: 16px 18px;
+            margin-bottom: 10px;
+            transition: all 0.2s;
+        }
+        .card-usuario:hover {
+            border-color: rgba(108, 140, 255, 0.25);
+        }
+
+        .card-usuario .avatar-usuario {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6c8cff, #4a6cf7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .card-usuario .avatar-usuario img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .card-usuario .info-usuario {
+            flex: 1;
+            min-width: 0;
+        }
+        .card-usuario .info-usuario strong {
+            display: block;
+            font-size: 0.92rem;
+            color: #e0e4f0;
+        }
+        .card-usuario .info-usuario small {
+            font-size: 0.78rem;
+            color: #6b7294;
+        }
+
+.btn-conectar {
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: none;
+            background: #6c8cff;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn-conectar:hover {
+            background: #5a7aef;
+        }
+        .btn-conectar.conectado {
+            background: rgba(46, 125, 50, 0.2);
+            color: #66bb6a;
+            border: 1px solid rgba(46, 125, 50, 0.3);
+        }
+        .btn-conectar.pendente {
+            background: rgba(255, 167, 38, 0.2);
+            color: #ffa726;
+            border: 1px solid rgba(255, 167, 38, 0.3);
+        }
+        .btn-conectar.remover {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef5350;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-perfil, .btn-msg {
+            padding: 7px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(108, 140, 255, 0.2);
+            background: transparent;
+            color: #8a92b0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn-perfil:hover, .btn-msg:hover {
+            border-color: #6c8cff;
+            color: #c0c8e8;
+            background: rgba(108, 140, 255, 0.06);
+        }
+        .acoes-card {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .conexoes-vazio {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6b7294;
+        }
+        .conexoes-vazio i {
+            font-size: 3rem;
+            color: rgba(108, 140, 255, 0.2);
+            margin-bottom: 16px;
+        }
+        .conexoes-vazio p {
+            font-size: 0.9rem;
+        }
+
+        .solicitacao-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(108, 140, 255, 0.06);
+            border: 1px solid rgba(108, 140, 255, 0.15);
+            border-radius: 14px;
+            padding: 16px 18px;
+            margin-bottom: 10px;
+        }
+        .solicitacao-item .acoes-solicitacao {
+            display: flex;
+            gap: 8px;
+        }
+        .btn-aceitar {
+            padding: 7px 16px;
+            border-radius: 20px;
+            border: none;
+            background: #22C55E;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .btn-recusar {
+            padding: 7px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            background: transparent;
+            color: #ef5350;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .conexoes-layout { padding: 16px; }
+            .card-usuario { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="topo">
+        <a class="marca" href="interno.html" aria-label="Página inicial do Senai Connect">
+            <span class="Logo">
+                <img src="https://i.ibb.co/xqQp0Z7V/Chat-GPT-Image-30-de-jul-de-2026-11-08-57.png" alt="Logo">
+            </span>
+            <strong>Senai Connect</strong>
+        </a>
+        <div class="acoes-topo" style="margin-left: auto;">
+            <button id="perfil-topo" class="perfil-topo" type="button" onclick="window.location.href='perfil.html'">
+                <span class="avatar mini" id="avatar-topo">A</span>
+                <span id="nome-topo">Aluno</span>
+            </button>
+            <button id="sair" class="sair" type="button">Sair</button>
+        </div>
+    </header>
+
+    <main class="conexoes-layout">
+        <div class="conexoes-header">
+            <h1>🌐 Sua Rede de Conexões</h1>
+            <p>Conecte-se com colegas, professores e profissionais da comunidade SENAI.</p>
+        </div>
+
+        <div class="conexoes-tabs">
+            <button class="conexoes-tab ativo" data-tab="descobrir">Descobrir</button>
+            <button class="conexoes-tab" data-tab="conexoes" id="tab-conexoes">Minhas Conexões</button>
+            <button class="conexoes-tab" data-tab="pendentes" id="tab-pendentes">Solicitações <span id="badge-pendentes"></span></button>
+        </div>
+
+        <div class="busca-usuarios">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="busca-usuarios" type="search" placeholder="Buscar pessoas por nome, curso ou matrícula...">
+        </div>
+
+        <div id="conteudo-conexoes">
+            <!-- Conteúdo renderizado via JS -->
+        </div>
+</main>
+
+    <!-- Modal de Perfil -->
+    <div id="modal-perfil" class="modal" style="display:none; position:fixed; inset:0; z-index:100; background:rgba(2,6,23,0.85); backdrop-filter:blur(8px); place-items:center; padding:20px;">
+        <div style="max-width:480px; width:100%; background:#0f172a; border:1px solid rgba(148,163,184,0.15); border-radius:22px; padding:30px; position:relative;">
+            <button onclick="fecharModalPerfil()" style="position:absolute; top:15px; right:15px; width:34px; height:34px; border:0; border-radius:10px; background:#111827; color:#94a3b8; cursor:pointer; font-size:1.1rem;"><i class="fa-solid fa-xmark"></i></button>
+            <div id="conteudo-modal-perfil" style="text-align:center;">
+                <div id="perfil-avatar" style="width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,#2563eb,#0ea5e9); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:2rem; font-weight:700; color:#fff;"></div>
+                <h2 id="perfil-nome" style="font-size:1.3rem; margin-bottom:4px;"></h2>
+                <p id="perfil-curso" style="color:#64748b; font-size:0.85rem; margin-bottom:8px;"></p>
+                <p id="perfil-tipo" style="color:#60a5fa; font-size:0.75rem; margin-bottom:16px; text-transform:uppercase; letter-spacing:1px;"></p>
+                <div id="perfil-sobre" style="color:#94a3b8; font-size:0.85rem; line-height:1.6; margin-bottom:20px; padding:16px; background:rgba(2,6,23,0.5); border-radius:14px; text-align:left;"></div>
+                <div style="display:flex; gap:10px; justify-content:center;">
+                    <button onclick="this.closest('#modal-perfil').style.display='none'" style="padding:10px 24px; border-radius:12px; border:1px solid rgba(148,163,184,0.2); background:transparent; color:#94a3b8; cursor:pointer; font-family:inherit; font-size:0.85rem;">Fechar</button>
+                    <button id="btn-msg-modal" style="padding:10px 24px; border-radius:12px; border:0; background:linear-gradient(135deg,#2563eb,#0ea5e9); color:#fff; cursor:pointer; font-family:inherit; font-size:0.85rem;"><i class="fa-regular fa-comment"></i> Enviar Mensagem</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        let todosUsuarios = [];
+        let dadosConexoes = {};
+        let sessao = null;
+        let filtroAtual = 'descobrir';
+
+        async function inicializar() {
+            sessao = getSessao();
+            if (!sessao || !getToken()) {
+                window.location.replace("login.html");
+                return;
+            }
+
+            const inicial = sessao.nome.charAt(0).toUpperCase();
+            document.querySelector("#nome-topo").textContent = sessao.nome.split(" ")[0];
+            document.querySelector("#avatar-topo").textContent = inicial;
+
+            document.querySelector("#sair")?.addEventListener("click", async () => {
+                await apiSair();
+                window.location.href = "index.html";
+            });
+
+            await carregarDados();
+        }
+
+        async function carregarDados() {
+            try {
+                const [usuarios, conexoes] = await Promise.all([
+                    apiListarUsuarios(),
+                    apiListarConexoes()
+                ]);
+                todosUsuarios = usuarios;
+                dadosConexoes = conexoes;
+
+                // Atualizar badge de pendentes
+                const pendentes = dadosConexoes.pendentes || [];
+                const badge = document.querySelector("#badge-pendentes");
+                if (badge) {
+                    if (pendentes.length > 0) {
+                        badge.textContent = `(${pendentes.length})`;
+                        badge.style.cssText = 'background:#22C55E; color:#fff; font-size:0.65rem; padding:1px 6px; border-radius:8px; margin-left:4px;';
+                    } else {
+                        badge.textContent = '';
+                    }
+                }
+
+                renderizar(filtroAtual);
+            } catch (erro) {
+                console.error("Erro ao carregar dados:", erro);
+                document.querySelector("#conteudo-conexoes").innerHTML = `
+                    <div class="conexoes-vazio">
+                        <i class="fa-solid fa-exclamation-triangle"></i>
+                        <p>Erro ao carregar dados. Verifique se o servidor está rodando.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function getStatusUsuario(usuarioId) {
+            const { aceitas = [], pendentes = [], enviadas = [] } = dadosConexoes;
+
+            const aceita = aceitas.find(c => c.usuario_id === usuarioId);
+            if (aceita) return { status: 'conectado', id: aceita.id };
+
+            const pendente = pendentes.find(c => c.usuario_id === usuarioId);
+            if (pendente) return { status: 'pendente_recebida', id: pendente.id };
+
+            const enviada = enviadas.find(c => c.usuario_id === usuarioId);
+            if (enviada) return { status: 'pendente_enviada', id: enviada.id };
+
+            return { status: 'nenhuma', id: null };
+        }
+
+        function renderizar(tab) {
+            filtroAtual = tab;
+            const container = document.querySelector("#conteudo-conexoes");
+
+            // Atualizar tabs
+            document.querySelectorAll(".conexoes-tab").forEach(t => t.classList.remove("ativo"));
+            document.querySelector(`.conexoes-tab[data-tab="${tab}"]`)?.classList.add("ativo");
+
+            if (tab === 'descobrir') {
+                renderizarDescobrir(container);
+            } else if (tab === 'conexoes') {
+                renderizarMinhasConexoes(container);
+            } else if (tab === 'pendentes') {
+                renderizarSolicitacoes(container);
+            }
+        }
+
+        function renderizarDescobrir(container) {
+            const query = (document.querySelector("#busca-usuarios").value || "").toLowerCase().trim();
+            let usuarios = todosUsuarios;
+
+            if (query) {
+                usuarios = usuarios.filter(u =>
+                    u.nome.toLowerCase().includes(query) ||
+                    (u.curso || "").toLowerCase().includes(query) ||
+                    u.matricula.toLowerCase().includes(query)
+                );
+            }
+
+            if (usuarios.length === 0) {
+                container.innerHTML = `
+                    <div class="conexoes-vazio">
+                        <i class="fa-solid fa-users"></i>
+                        <p>${query ? 'Nenhum usuário encontrado para esta busca.' : 'Nenhum outro usuário cadastrado na plataforma.'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = usuarios.map(u => {
+                const { status, id } = getStatusUsuario(u.id);
+                const inicial = u.nome.charAt(0).toUpperCase();
+                let btnClass = 'btn-conectar';
+                let btnText = 'Conectar';
+
+                if (status === 'conectado') {
+                    btnClass += ' conectado';
+                    btnText = 'Conectado ✓';
+                } else if (status === 'pendente_enviada') {
+                    btnClass += ' pendente';
+                    btnText = 'Pendente ⏳';
+                } else if (status === 'pendente_recebida') {
+                    btnClass += ' pendente';
+                    btnText = 'Responder';
+                }
+
+                const fotoHtml = u.foto
+                    ? `<img src="${u.foto}" alt="Foto de ${u.nome}">`
+                    : inicial;
+
+                return `
+                    <div class="card-usuario" data-id="${u.id}">
+                        <div class="avatar-usuario">${fotoHtml}</div>
+                        <div class="info-usuario">
+                            <strong>${u.nome}</strong>
+                            <small>${u.curso || "Membro da comunidade"} · Matrícula: ${u.matricula}</small>
+                        </div>
+                        <button class="${btnClass}" data-usuario-id="${u.id}" data-conexao-id="${id || ''}" data-status="${status}">
+                            ${btnText}
+                        </button>
+                    </div>
+                `;
+            }).join("");
+
+            // Adicionar eventos
+            container.querySelectorAll(".btn-conectar").forEach(btn => {
+                btn.addEventListener("click", async (e) => {
+                    e.stopPropagation();
+                    const usuarioId = parseInt(btn.dataset.usuarioId);
+                    const statusAtual = btn.dataset.status;
+
+                    if (statusAtual === 'conectado') {
+                        // Desconectar
+                        if (!confirm("Remover esta conexão?")) return;
+                        try {
+                            await apiRemoverConexao(parseInt(btn.dataset.conexaoId));
+                            await carregarDados();
+                        } catch (erro) {
+                            alert(erro.message);
+                        }
+                    } else if (statusAtual === 'pendente_recebida') {
+                        // Abrir aba de pendentes
+                        renderizar('pendentes');
+                    } else if (statusAtual === 'nenhuma') {
+                        try {
+                            await apiSolicitarConexao(usuarioId);
+                            await carregarDados();
+                        } catch (erro) {
+                            alert(erro.message);
+                        }
+                    }
+                });
+            });
+        }
+
+        function renderizarMinhasConexoes(container) {
+            const aceitas = dadosConexoes.aceitas || [];
+
+            if (aceitas.length === 0) {
+                container.innerHTML = `
+                    <div class="conexoes-vazio">
+                        <i class="fa-solid fa-user-group"></i>
+                        <p>Você ainda não tem conexões. Vá em "Descobrir" para encontrar colegas!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = aceitas.map(c => {
+                const inicial = c.nome.charAt(0).toUpperCase();
+                return `
+                    <div class="card-usuario">
+                        <div class="avatar-usuario" style="background: linear-gradient(135deg, #22C55E, #166534);">
+                            ${c.foto ? `<img src="${c.foto}" alt="Foto de ${c.nome}">` : inicial}
+                        </div>
+                        <div class="info-usuario">
+                            <strong>${c.nome}</strong>
+                            <small>${c.curso || "Membro da comunidade"} · Conectado desde ${new Date(c.criado_em).toLocaleDateString('pt-BR')}</small>
+                        </div>
+                        <div class="acoes-card">
+                            <button class="btn-perfil" data-usuario-id="${c.usuario_id}"><i class="fa-regular fa-user"></i> Perfil</button>
+                            <button class="btn-msg" data-usuario-id="${c.usuario_id}"><i class="fa-regular fa-comment"></i> Msg</button>
+                            <button class="btn-conectar remover" data-conexao-id="${c.id}">Remover</button>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+
+            container.querySelectorAll(".btn-conectar.remover").forEach(btn => {
+                btn.addEventListener("click", async () => {
+                    if (!confirm("Remover esta conexão?")) return;
+                    try {
+                        await apiRemoverConexao(parseInt(btn.dataset.conexaoId));
+                        await carregarDados();
+                    } catch (erro) {
+                        alert(erro.message);
+                    }
+                });
+            });
+        }
+
+        function renderizarSolicitacoes(container) {
+            const pendentes = dadosConexoes.pendentes || [];
+
+            if (pendentes.length === 0) {
+                container.innerHTML = `
+                    <div class="conexoes-vazio">
+                        <i class="fa-regular fa-bell"></i>
+                        <p>Nenhuma solicitação de conexão pendente.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = pendentes.map(c => {
+                const inicial = c.nome.charAt(0).toUpperCase();
+                return `
+                    <div class="solicitacao-item" data-id="${c.id}">
+                        <div class="avatar-usuario" style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, #ffa726, #f57c00); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:1rem; color:#fff; flex-shrink:0;">
+                            ${c.foto ? `<img src="${c.foto}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">` : inicial}
+                        </div>
+                        <div class="info-usuario" style="flex:1;">
+                            <strong>${c.nome}</strong>
+                            <small>${c.curso || "Membro da comunidade"} · quer se conectar com você</small>
+                        </div>
+                        <div class="acoes-solicitacao">
+                            <button class="btn-aceitar" data-id="${c.id}">Aceitar</button>
+                            <button class="btn-recusar" data-id="${c.id}">Recusar</button>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+
+            container.querySelectorAll(".btn-aceitar").forEach(btn => {
+                btn.addEventListener("click", async () => {
+                    try {
+                        await apiResponderConexao(parseInt(btn.dataset.id), "aceitar");
+                        await carregarDados();
+                    } catch (erro) {
+                        alert(erro.message);
+                    }
+                });
+            });
+
+            container.querySelectorAll(".btn-recusar").forEach(btn => {
+                btn.addEventListener("click", async () => {
+                    try {
+                        await apiResponderConexao(parseInt(btn.dataset.id), "recusar");
+                        await carregarDados();
+                    } catch (erro) {
+                        alert(erro.message);
+                    }
+                });
+            });
+        }
+
+        // Eventos
+        document.querySelectorAll(".conexoes-tab").forEach(tab => {
+            tab.addEventListener("click", () => renderizar(tab.dataset.tab));
+        });
+
+        document.querySelector("#busca-usuarios")?.addEventListener("input", () => {
+            if (filtroAtual === 'descobrir') {
+                renderizar('descobrir');
+            }
+        });
+
+// Inicializar
+        inicializar();
+
+        // ===== BOTÕES PERFIL E MENSAGEM =====
+        document.addEventListener("click", async (e) => {
+            const btnPerfil = e.target.closest(".btn-perfil");
+            if (btnPerfil) {
+                const usuarioId = btnPerfil.dataset.usuarioId;
+                await abrirModalPerfil(usuarioId);
+                return;
+            }
+            const btnMsg = e.target.closest(".btn-msg");
+            if (btnMsg) {
+                const usuarioId = btnMsg.dataset.usuarioId;
+                window.location.href = `mensagens.html?usuario=${usuarioId}`;
+                return;
+            }
+        });
+
+        async function abrirModalPerfil(usuarioId) {
+            try {
+                const usuario = await apiBuscarUsuario(usuarioId);
+                const modal = document.querySelector("#modal-perfil");
+                const inicial = usuario.nome.charAt(0).toUpperCase();
+
+                document.querySelector("#perfil-avatar").innerHTML = usuario.foto
+                    ? `<img src="${usuario.foto}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`
+                    : inicial;
+                document.querySelector("#perfil-nome").textContent = usuario.nome;
+                document.querySelector("#perfil-curso").textContent = usuario.curso || "Membro da comunidade";
+                document.querySelector("#perfil-tipo").textContent = usuario.tipo || "aluno";
+                document.querySelector("#perfil-sobre").textContent = usuario.sobre || "Nenhuma descrição disponível.";
+                document.querySelector("#btn-msg-modal").onclick = () => {
+                    modal.style.display = "none";
+                    window.location.href = `mensagens.html?usuario=${usuarioId}`;
+                };
+
+                modal.style.display = "grid";
+            } catch (erro) {
+                alert("Erro ao carregar perfil: " + erro.message);
+            }
+        }
+
+        function fecharModalPerfil() {
+            document.querySelector("#modal-perfil").style.display = "none";
+        }
+    </script>
+</body>
+</html>

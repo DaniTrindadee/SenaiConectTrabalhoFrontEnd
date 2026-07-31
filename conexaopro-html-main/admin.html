@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo | SenaiConnect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <style>
+        /* ===== ADMIN THEME ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            color-scheme: dark;
+            --fundo: #020617;
+            --painel: #0b1220;
+            --painel2: #0f172a;
+            --borda: rgba(148, 163, 184, 0.15);
+            --texto: #e2e8f0;
+            --muted: #7c8ba1;
+            --azul: #3b82f6;
+            --azul2: #0ea5e9;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Poppins", sans-serif;
+            color: var(--texto);
+            background: radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.13), transparent 28%),
+                        radial-gradient(circle at 85% 70%, rgba(14, 165, 233, 0.08), transparent 30%),
+                        var(--fundo);
+        }
+
+        button, input, select, textarea {
+            font: inherit;
+        }
+
+        /* ===== LOGIN ADMIN ===== */
+        .admin-login-wrapper {
+            display: none;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .admin-login-card {
+            width: min(460px, 100%);
+            padding: 38px;
+            border: 1px solid var(--borda);
+            border-radius: 30px;
+            background: rgba(15, 23, 42, 0.88);
+            box-shadow: 0 35px 85px rgba(0, 0, 0, 0.45), 0 0 55px rgba(37, 99, 235, 0.12);
+            backdrop-filter: blur(18px);
+        }
+
+        .admin-login-card .logo-admin {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 32px;
+        }
+
+        .admin-login-card .logo-admin .icone {
+            width: 58px;
+            height: 58px;
+            display: grid;
+            place-items: center;
+            border-radius: 18px;
+            background: linear-gradient(145deg, #2563eb, #0ea5e9);
+            box-shadow: 0 0 35px rgba(37, 99, 235, 0.45);
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .admin-login-card .logo-admin div strong {
+            display: block;
+            font-size: 1.2rem;
+        }
+
+        .admin-login-card .logo-admin div small {
+            color: #60a5fa;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+        }
+
+        .admin-login-card h1 {
+            font-size: 1.8rem;
+            margin: 6px 0 24px;
+        }
+
+        .admin-login-card .campo {
+            min-height: 54px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 15px;
+            border: 1px solid var(--borda);
+            border-radius: 15px;
+            background: rgba(2, 6, 23, 0.65);
+            margin-bottom: 12px;
+        }
+
+        .admin-login-card .campo:focus-within {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+        }
+
+        .admin-login-card .campo i {
+            width: 18px;
+            color: #60a5fa;
+        }
+
+        .admin-login-card .campo input {
+            width: 100%;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .admin-login-card .campo input::placeholder {
+            color: #64748b;
+        }
+
+        .admin-login-card .botao-principal {
+            min-height: 54px;
+            width: 100%;
+            margin-top: 10px;
+            border: 0;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #2563eb, #0ea5e9);
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 15px 32px rgba(37, 99, 235, 0.25);
+        }
+
+        .admin-login-card .botao-principal:hover {
+            transform: translateY(-1px);
+        }
+
+        #admin-login-msg {
+            min-height: 22px;
+            font-size: 0.82rem;
+            margin-top: 8px;
+        }
+
+        .admin-login-card .aviso {
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 1px solid var(--borda);
+            color: #64748b;
+            font-size: 0.72rem;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        /* ===== PAINEL ===== */
+        #admin-painel {
+            display: none;
+        }
+
+        .admin-topo {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            height: 76px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 34px;
+            border-bottom: 1px solid var(--borda);
+            background: rgba(2, 6, 23, 0.91);
+            backdrop-filter: blur(18px);
+        }
+
+        .admin-topo .marca {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .admin-topo .marca .icone {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: linear-gradient(145deg, #2563eb, #0ea5e9);
+            box-shadow: 0 0 25px rgba(37, 99, 235, 0.28);
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .admin-topo .marca strong {
+            font-size: 1.02rem;
+        }
+
+        .admin-topo .marca small {
+            display: block;
+            color: #60a5fa;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .admin-topo .acoes {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .admin-topo .acoes span {
+            color: #94a3b8;
+            font-size: 0.82rem;
+        }
+
+        .admin-topo .acoes button {
+            padding: 8px 16px;
+            border: 1px solid var(--borda);
+            border-radius: 12px;
+            background: #0f172a;
+            color: #cbd5e1;
+            cursor: pointer;
+            font-size: 0.82rem;
+        }
+
+        .admin-topo .acoes button:hover {
+            background: rgba(37, 99, 235, 0.14);
+            color: #fff;
+        }
+
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 230px 1fr;
+            gap: 26px;
+            width: min(1520px, 100%);
+            margin: auto;
+            padding: 30px;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .admin-nav {
+            position: sticky;
+            top: 105px;
+            height: max-content;
+            padding: 20px;
+            border: 1px solid var(--borda);
+            background: rgba(11, 18, 32, 0.92);
+            border-radius: 22px;
+        }
+
+        .admin-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.82rem;
+            margin-bottom: 4px;
+            cursor: pointer;
+        }
+
+        .admin-nav a:hover,
+        .admin-nav a.ativo {
+            color: #fff;
+            background: rgba(37, 99, 235, 0.14);
+        }
+
+        .admin-nav a i {
+            width: 18px;
+            text-align: center;
+        }
+
+        .admin-nav .divider {
+            height: 1px;
+            background: var(--borda);
+            margin: 14px 0;
+        }
+
+        /* ===== CONTEÚDO ===== */
+        .admin-conteudo {
+            display: grid;
+            gap: 24px;
+        }
+
+        .admin-secao {
+            display: none;
+        }
+
+        .admin-secao.ativa {
+            display: block;
+        }
+
+        .admin-secao h2 {
+            font-size: 1.6rem;
+            margin-bottom: 6px;
+        }
+
+        .admin-secao > p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-bottom: 24px;
+        }
+
+        /* ===== CARDS DASHBOARD ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-card {
+            padding: 22px;
+            border: 1px solid var(--borda);
+            background: rgba(11, 18, 32, 0.92);
+            border-radius: 22px;
+            text-align: center;
+        }
+
+        .stat-card .numero {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: #60a5fa;
+        }
+
+        .stat-card .rotulo {
+            margin-top: 6px;
+            color: #94a3b8;
+            font-size: 0.78rem;
+        }
+
+        .stat-card .icone-stat {
+            font-size: 1.6rem;
+            color: var(--azul2);
+            margin-bottom: 10px;
+        }
+
+        .stat-card.destaque {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(14, 165, 233, 0.05));
+            border-color: rgba(96, 165, 250, 0.25);
+        }
+
+        /* ===== FORMULÁRIOS ===== */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .admin-form {
+            padding: 24px;
+            border: 1px solid var(--borda);
+            background: rgba(11, 18, 32, 0.92);
+            border-radius: 22px;
+        }
+
+        .admin-form h3 {
+            font-size: 1.1rem;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-form h3 i {
+            color: #60a5fa;
+        }
+
+        .admin-form label {
+            display: block;
+            margin-top: 12px;
+            margin-bottom: 5px;
+            color: #cbd5e1;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .admin-form .campo {
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 14px;
+            border: 1px solid var(--borda);
+            border-radius: 14px;
+            background: rgba(2, 6, 23, 0.65);
+            margin-bottom: 4px;
+        }
+
+        .admin-form .campo:focus-within {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+        }
+
+        .admin-form .campo i {
+            width: 16px;
+            color: #60a5fa;
+            font-size: 0.85rem;
+        }
+
+        .admin-form .campo input,
+        .admin-form .campo select {
+            width: 100%;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: #fff;
+            font-size: 0.85rem;
+        }
+
+        .admin-form .campo select option {
+            background: #0f172a;
+        }
+
+        .admin-form .campo input::placeholder {
+            color: #64748b;
+        }
+
+        .admin-form .botao-submit {
+            width: 100%;
+            height: 48px;
+            margin-top: 18px;
+            border: 0;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #2563eb, #0ea5e9);
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.2);
+            font-size: 0.85rem;
+        }
+
+        .admin-form .botao-submit:hover {
+            transform: translateY(-1px);
+        }
+
+        .admin-form .botao-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ===== TABELA ===== */
+        .admin-tabela-wrapper {
+            padding: 20px;
+            border: 1px solid var(--borda);
+            background: rgba(11, 18, 32, 0.92);
+            border-radius: 22px;
+        }
+
+        .admin-tabela-wrapper .topo-tabela {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .admin-tabela-wrapper .topo-tabela .filtros {
+            display: flex;
+            gap: 6px;
+        }
+
+        .admin-tabela-wrapper .topo-tabela .filtros button {
+            padding: 6px 14px;
+            border: 1px solid var(--borda);
+            border-radius: 10px;
+            background: transparent;
+            color: #94a3b8;
+            font-size: 0.72rem;
+            cursor: pointer;
+        }
+
+        .admin-tabela-wrapper .topo-tabela .filtros button.ativo,
+        .admin-tabela-wrapper .topo-tabela .filtros button:hover {
+            background: rgba(37, 99, 235, 0.14);
+            color: #60a5fa;
+            border-color: rgba(96, 165, 250, 0.3);
+        }
+
+        .admin-tabela {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-tabela th {
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--borda);
+            color: #94a3b8;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-tabela td {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.06);
+            font-size: 0.82rem;
+        }
+
+        .admin-tabela tr:hover td {
+            background: rgba(37, 99, 235, 0.04);
+        }
+
+        .admin-tabela .vazio {
+            text-align: center;
+            color: #64748b;
+            padding: 40px 14px;
+        }
+
+        .tag-tipo {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 99px;
+            font-size: 0.68rem;
+            font-weight: 600;
+        }
+
+        .tag-aluno {
+            background: rgba(37, 99, 235, 0.14);
+            color: #60a5fa;
+        }
+
+        .tag-professor {
+            background: rgba(124, 58, 237, 0.14);
+            color: #a78bfa;
+        }
+
+        .acoes {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-editar,
+        .btn-excluir {
+            width: 34px;
+            height: 34px;
+            border: 0;
+            border-radius: 10px;
+            background: transparent;
+            color: #64748b;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .btn-editar:hover {
+            color: #60a5fa;
+            background: rgba(96, 165, 250, 0.09);
+        }
+
+        .btn-excluir:hover {
+            color: #f87171;
+            background: rgba(248, 113, 113, 0.09);
+        }
+
+        code {
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: #111827;
+            color: #86efac;
+            font-size: 0.78rem;
+        }
+
+        /* ===== MATRÍCULAS ===== */
+        .aviso-matriculas {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            border-radius: 12px;
+            background: rgba(37, 99, 235, 0.08);
+            color: #93c5fd;
+            font-size: 0.76rem;
+            text-align: center;
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 80;
+            display: none;
+            place-items: center;
+            padding: 20px;
+            background: rgba(2, 6, 23, 0.74);
+            backdrop-filter: blur(8px);
+        }
+
+        .modal.aberto {
+            display: grid;
+        }
+
+        .modal-conteudo {
+            position: relative;
+            width: min(500px, 100%);
+            padding: 28px;
+            border: 1px solid var(--borda);
+            border-radius: 22px;
+            background: #0b1220;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
+        }
+
+        .modal-conteudo h2 {
+            font-size: 1.2rem;
+            margin-bottom: 18px;
+        }
+
+        .fechar-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 34px;
+            height: 34px;
+            border: 0;
+            border-radius: 10px;
+            background: #111827;
+            color: #94a3b8;
+            cursor: pointer;
+        }
+
+        /* ===== TOAST ===== */
+        .admin-toast {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            z-index: 120;
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-size: 0.82rem;
+            box-shadow: 0 16px 45px rgba(0, 0, 0, 0.35);
+            opacity: 0;
+            transform: translateY(12px);
+            transition: 0.25s ease;
+            pointer-events: none;
+        }
+
+        .admin-toast.visivel {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .admin-toast.sucesso {
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(37, 99, 235, 0.06));
+            color: #86efac;
+        }
+
+        .admin-toast.erro {
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            background: linear-gradient(135deg, rgba(248, 113, 113, 0.12), rgba(37, 99, 235, 0.06));
+            color: #fca5a5;
+        }
+
+        /* ===== RESPONSIVO ===== */
+        @media (max-width: 1024px) {
+            .admin-layout {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+
+            .admin-nav {
+                position: static;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                padding: 14px;
+            }
+
+            .admin-nav a {
+                flex: 1;
+                min-width: 100px;
+                justify-content: center;
+                font-size: 0.72rem;
+                padding: 10px;
+            }
+
+            .admin-nav a span {
+                display: none;
+            }
+
+            .admin-nav .divider {
+                display: none;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .admin-topo {
+                padding: 0 15px;
+            }
+
+            .admin-topo .marca strong {
+                display: none;
+            }
+
+            .admin-topo .acoes span {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-tabela {
+                font-size: 0.72rem;
+            }
+
+            .admin-tabela th,
+            .admin-tabela td {
+                padding: 8px 6px;
+            }
+
+            .admin-tabela-wrapper .topo-tabela {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== TOAST ===== -->
+    <div id="admin-toast" class="admin-toast" role="alert"></div>
+
+    <!-- ===== TELA DE LOGIN ADMIN ===== -->
+    <div id="admin-login" class="admin-login-wrapper">
+        <div class="admin-login-card">
+            <div class="logo-admin">
+                <span class="icone">SC</span>
+                <div>
+                    <strong>Senai Connect</strong>
+                    <small>Painel Administrativo</small>
+                </div>
+            </div>
+
+            <h1>Acesso restrito</h1>
+
+            <form id="form-admin-login" novalidate>
+                <div class="campo">
+                    <i class="fa-regular fa-id-card"></i>
+                    <input id="admin-matricula" name="matricula" type="text" placeholder="Matrícula do administrador" required>
+                </div>
+
+                <div class="campo">
+                    <i class="fa-solid fa-lock"></i>
+                    <input id="admin-senha" name="senha" type="password" placeholder="Senha" required>
+                </div>
+
+                <p id="admin-login-msg"></p>
+
+                <button class="botao-principal" type="submit">Entrar no Painel</button>
+            </form>
+
+            <p class="aviso">Acesso exclusivo para administradores da plataforma SenaiConnect.</p>
+        </div>
+    </div>
+
+    <!-- ===== PAINEL ADMIN ===== -->
+    <div id="admin-painel">
+        <header class="admin-topo">
+            <a class="marca" href="index.html">
+                <span class="icone">SC</span>
+                <div>
+                    <strong>SenaiConnect</strong>
+                    <small>Painel Administrativo</small>
+                </div>
+            </a>
+
+            <div class="acoes">
+                <span><i class="fa-regular fa-user"></i> <b id="admin-nome">Admin</b></span>
+                <a href="index.html" style="text-decoration:none;color:#94a3b8;font-size:0.82rem;" title="Ir para o site"><i class="fa-solid fa-external-link-alt"></i> Site</a>
+                <button id="admin-sair" type="button"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
+            </div>
+        </header>
+
+        <div class="admin-layout">
+            <!-- Sidebar -->
+            <nav class="admin-nav" aria-label="Navegação do painel">
+                <a data-secao="secao-dashboard" class="ativo"><i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span></a>
+                <a data-secao="secao-cadastros"><i class="fa-solid fa-user-plus"></i> <span>Cadastrar</span></a>
+                <a data-secao="secao-usuarios"><i class="fa-solid fa-users"></i> <span>Usuários</span></a>
+                <a data-secao="secao-matriculas"><i class="fa-solid fa-id-card"></i> <span>Matrículas</span></a>
+                <div class="divider"></div>
+                <a href="index.html"><i class="fa-solid fa-house"></i> <span>Ir para o site</span></a>
+            </nav>
+
+            <!-- Conteúdo -->
+            <div class="admin-conteudo">
+
+                <!-- ===== DASHBOARD ===== -->
+                <section id="secao-dashboard" class="admin-secao ativa">
+                    <h2>Dashboard</h2>
+                    <p>Visão geral da plataforma SenaiConnect</p>
+
+                    <div class="stats-grid">
+                        <div class="stat-card destaque">
+                            <div class="icone-stat"><i class="fa-solid fa-users"></i></div>
+                            <div class="numero" id="stat-total">0</div>
+                            <div class="rotulo">Total de Usuários</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="icone-stat"><i class="fa-solid fa-user-graduate"></i></div>
+                            <div class="numero" id="stat-alunos">0</div>
+                            <div class="rotulo">Alunos</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="icone-stat"><i class="fa-solid fa-chalkboard-user"></i></div>
+                            <div class="numero" id="stat-professores">0</div>
+                            <div class="rotulo">Professores</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="icone-stat"><i class="fa-solid fa-handshake"></i></div>
+                            <div class="numero" id="stat-conexoes">0</div>
+                            <div class="rotulo">Conexões Ativas</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="icone-stat"><i class="fa-regular fa-clock"></i></div>
+                            <div class="numero" id="stat-pendentes">0</div>
+                            <div class="rotulo">Solicitações Pendentes</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== CADASTROS ===== -->
+                <section id="secao-cadastros" class="admin-secao">
+                    <h2>Cadastrar Usuários</h2>
+                    <p>Registre matrículas de alunos e professores no banco de dados</p>
+
+                    <div class="form-grid">
+                        <!-- Cadastrar Aluno -->
+                        <form id="form-aluno" class="admin-form">
+                            <h3><i class="fa-solid fa-user-graduate"></i> Cadastrar Aluno</h3>
+
+                            <label for="aluno-nome">Nome completo</label>
+                            <div class="campo">
+                                <i class="fa-regular fa-user"></i>
+                                <input id="aluno-nome" name="nome" type="text" placeholder="Nome do aluno" required>
+                            </div>
+
+                            <label for="aluno-matricula">Nº da Matrícula</label>
+                            <div class="campo">
+                                <i class="fa-regular fa-id-card"></i>
+                                <input id="aluno-matricula" name="matricula" type="text" inputmode="numeric" placeholder="Ex: 2024001" required>
+                            </div>
+
+                            <label for="aluno-curso">Curso</label>
+                            <div class="campo">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                                <select id="aluno-curso" name="curso">
+                                    <option value="">Selecione um curso</option>
+                                    <option>Programador Frontend</option>
+                                    <option>Programador Backend</option>
+                                    <option>Metal-Mecânica</option>
+                                    <option>Construção Civil</option>
+                                    <option>Logística</option>
+                                    <option>Administração</option>
+                                    <option>Eletrônica</option>
+                                    <option>Outro curso</option>
+                                </select>
+                            </div>
+
+                            <label for="aluno-senha">Senha (mín. 4 caracteres)</label>
+                            <div class="campo">
+                                <i class="fa-solid fa-lock"></i>
+                                <input id="aluno-senha" name="senha" type="password" placeholder="Senha de acesso" required minlength="4">
+                            </div>
+
+                            <button class="botao-submit" type="submit">Cadastrar Aluno</button>
+                        </form>
+
+                        <!-- Cadastrar Professor -->
+                        <form id="form-professor" class="admin-form">
+                            <h3><i class="fa-solid fa-chalkboard-user"></i> Cadastrar Professor</h3>
+
+                            <label for="prof-nome">Nome completo</label>
+                            <div class="campo">
+                                <i class="fa-regular fa-user"></i>
+                                <input id="prof-nome" name="nome" type="text" placeholder="Nome do professor" required>
+                            </div>
+
+                            <label for="prof-matricula">Nº da Matrícula</label>
+                            <div class="campo">
+                                <i class="fa-regular fa-id-card"></i>
+                                <input id="prof-matricula" name="matricula" type="text" inputmode="numeric" placeholder="Ex: 2024002" required>
+                            </div>
+
+                            <label for="prof-curso">Curso / Disciplina</label>
+                            <div class="campo">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                                <select id="prof-curso" name="curso">
+                                    <option value="">Selecione um curso</option>
+                                    <option>Programador Frontend</option>
+                                    <option>Programador Backend</option>
+                                    <option>Metal-Mecânica</option>
+                                    <option>Construção Civil</option>
+                                    <option>Logística</option>
+                                    <option>Administração</option>
+                                    <option>Eletrônica</option>
+                                    <option>Outro curso</option>
+                                </select>
+                            </div>
+
+                            <label for="prof-senha">Senha (mín. 4 caracteres)</label>
+                            <div class="campo">
+                                <i class="fa-solid fa-lock"></i>
+                                <input id="prof-senha" name="senha" type="password" placeholder="Senha de acesso" required minlength="4">
+                            </div>
+
+                            <button class="botao-submit" type="submit">Cadastrar Professor</button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- ===== LISTA DE USUÁRIOS ===== -->
+                <section id="secao-usuarios" class="admin-secao">
+                    <h2>Usuários Cadastrados</h2>
+                    <p>Gerencie todos os alunos e professores da plataforma</p>
+
+                    <div class="admin-tabela-wrapper">
+                        <div class="topo-tabela">
+                            <div class="filtros">
+                                <button class="filtro-tabela ativo" data-filtro="">Todos</button>
+                                <button class="filtro-tabela" data-filtro="aluno">Alunos</button>
+                                <button class="filtro-tabela" data-filtro="professor">Professores</button>
+                            </div>
+                        </div>
+                        <table class="admin-tabela" id="tabela-usuarios">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Matrícula</th>
+                                    <th>Curso</th>
+                                    <th>Tipo</th>
+                                    <th>Criado em</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="6" class="vazio">Carregando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- ===== MATRÍCULAS ATIVAS ===== -->
+                <section id="secao-matriculas" class="admin-secao">
+                    <h2>Matrículas Ativas</h2>
+                    <p>Lista de matrículas válidas para testar o login no site</p>
+
+                    <div class="admin-tabela-wrapper">
+                        <div id="lista-matriculas">
+                            <p class="vazio">Carregando...</p>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL EDITAR ===== -->
+    <div id="modal-editar" class="modal" aria-hidden="true">
+        <div class="modal-conteudo" role="dialog" aria-modal="true">
+            <button id="fechar-modal-editar" class="fechar-modal" type="button" aria-label="Fechar">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h2>Editar Usuário</h2>
+
+            <form id="form-editar" class="admin-form" style="padding:0;border:none;background:transparent;">
+                <input type="hidden" id="edit-id" name="id">
+
+                <label for="edit-nome">Nome completo</label>
+                <div class="campo">
+                    <i class="fa-regular fa-user"></i>
+                    <input id="edit-nome" name="nome" type="text" required>
+                </div>
+
+                <label for="edit-matricula">Matrícula</label>
+                <div class="campo">
+                    <i class="fa-regular fa-id-card"></i>
+                    <input id="edit-matricula" name="matricula" type="text" required>
+                </div>
+
+                <label for="edit-curso">Curso</label>
+                <div class="campo">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <input id="edit-curso" name="curso" type="text">
+                </div>
+
+                <label for="edit-tipo">Tipo</label>
+                <div class="campo">
+                    <i class="fa-solid fa-tag"></i>
+                    <select id="edit-tipo" name="tipo">
+                        <option value="aluno">Aluno</option>
+                        <option value="professor">Professor</option>
+                    </select>
+                </div>
+
+                <label for="edit-senha">Nova senha (deixe vazio para manter)</label>
+                <div class="campo">
+                    <i class="fa-solid fa-lock"></i>
+                    <input id="edit-senha" name="senha" type="password" placeholder="Nova senha (opcional)" minlength="4">
+                </div>
+
+                <button class="botao-submit" type="submit">Salvar Alterações</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

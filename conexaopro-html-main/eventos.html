@@ -1034,7 +1034,39 @@
         </div>
     </div>
 
+    <script src="js/api.js"></script>
     <script>
+        // ===== VERIFICAR SESSÃO =====
+        (async function() {
+            const sessao = getSessao();
+            if (!sessao || !getToken()) {
+                window.location.replace("login.html");
+                return;
+            }
+            try {
+                await apiValidarSessao();
+            } catch {
+                window.location.replace("login.html");
+                return;
+            }
+
+            // Atualizar nome do usuário no topo
+            const usuario = getSessao();
+            if (usuario) {
+                const inicial = usuario.nome.charAt(0).toUpperCase();
+                const primeiroNome = usuario.nome.split(" ")[0];
+                const avatarTopo = document.querySelector("#avatar-topo");
+                const nomeTopo = document.querySelector("#nome-topo");
+                if (avatarTopo) avatarTopo.textContent = inicial;
+                if (nomeTopo) nomeTopo.textContent = primeiroNome;
+            }
+        })();
+
+        document.querySelector("#sair")?.addEventListener("click", async () => {
+            await apiSair();
+            window.location.href = "index.html";
+        });
+
         // ===== DADOS DE EVENTOS =====
         const eventos = [
             {
