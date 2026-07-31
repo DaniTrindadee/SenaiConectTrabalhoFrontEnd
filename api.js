@@ -149,3 +149,20 @@ async function apiRemoverConexao(id) {
         method: "DELETE",
     });
 }
+
+// ===== MENSAGENS =====
+
+async function apiEnviarMensagem(destinatarioId, mensagem) {
+    return apiFetch("/mensagens/enviar", {
+        method: "POST",
+        body: JSON.stringify({ destinatario_id: destinatarioId, mensagem }),
+    });
+}
+
+async function apiListarConversas() {
+    return apiFetch("/mensagens/conversas");
+}
+
+async function apiBuscarMensagens(usuarioId) {
+    return apiFetch(`/mensagens/${usuarioId}`);
+}

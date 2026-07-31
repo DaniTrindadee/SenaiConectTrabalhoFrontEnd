@@ -27,6 +27,24 @@ function conectar() {
         // Coluna já existe, ignorar
     }
 
+    // Migração: criar tabela de mensagens se não existir (para bancos já criados sem ela)
+    try {
+        db.exec(`
+            CREATE TABLE IF NOT EXISTS mensagens (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                remetente_id INTEGER NOT NULL,
+                destinatario_id INTEGER NOT NULL,
+                mensagem TEXT NOT NULL,
+                lida INTEGER NOT NULL DEFAULT 0,
+                criado_em TEXT DEFAULT (datetime('now')),
+                FOREIGN KEY (remetente_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+                FOREIGN KEY (destinatario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+            )
+        `);
+    } catch {
+        // Tabela já existe, ignorar
+    }
+
     // Seed: criar admin padrão se não existir
     const adminExistente = db.prepare("SELECT id FROM usuarios WHERE matricula = ?").get("admin");
     if (!adminExistente) {
@@ -68,7 +86,7 @@ function criarTabelas() {
             FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
         );
 
-        -- ===== CONEXÕES (seguir/conectar usuários) =====
+-- ===== CONEXÕES (seguir/conectar usuários) =====
         CREATE TABLE IF NOT EXISTS conexoes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             solicitante_id INTEGER NOT NULL,
@@ -79,6 +97,18 @@ function criarTabelas() {
             FOREIGN KEY (solicitante_id) REFERENCES usuarios(id) ON DELETE CASCADE,
             FOREIGN KEY (destinatario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
             UNIQUE(solicitante_id, destinatario_id)
+        );
+
+        -- ===== MENSAGENS =====
+        CREATE TABLE IF NOT EXISTS mensagens (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            remetente_id INTEGER NOT NULL,
+            destinatario_id INTEGER NOT NULL,
+            mensagem TEXT NOT NULL,
+            lida INTEGER NOT NULL DEFAULT 0,
+            criado_em TEXT DEFAULT (datetime('now')),
+            FOREIGN KEY (remetente_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+            FOREIGN KEY (destinatario_id) REFERENCES usuarios(id) ON DELETE CASCADE
         );
 
         -- ===== ÍNDICES =====

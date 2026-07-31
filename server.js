@@ -404,6 +404,110 @@ app.delete("/api/conexoes/:id", authMiddleware, (req, res) => {
     }
 });
 
+// ===== ROTAS DE MENSAGENS =====
+
+// Enviar mensagem
+app.post("/api/mensagens/enviar", authMiddleware, (req, res) => {
+    try {
+        const { destinatario_id, mensagem } = req.body;
+
+        if (!destinatario_id || !mensagem?.trim()) {
+            return res.status(400).json({ erro: "Destinatário e mensagem são obrigatórios." });
+        }
+
+        if (destinatario_id === req.usuario.id) {
+            return res.status(400).json({ erro: "Você não pode enviar mensagem para si mesmo." });
+        }
+
+        // Verificar se destinatário existe
+        const destinatario = db.prepare("SELECT id FROM usuarios WHERE id = ?").get(destinatario_id);
+        if (!destinatario) {
+            return res.status(404).json({ erro: "Usuário não encontrado." });
+        }
+
+        const resultado = db.prepare(`
+            INSERT INTO mensagens (remetente_id, destinatario_id, mensagem)
+            VALUES (?, ?, ?)
+        `).run(req.usuario.id, destinatario_id, mensagem.trim());
+
+        res.status(201).json({
+            mensagem: "Mensagem enviada!",
+            id: resultado.lastInsertRowid,
+            criado_em: new Date().toISOString()
+        });
+    } catch (erro) {
+        console.error("Erro ao enviar mensagem:", erro);
+        res.status(500).json({ erro: "Erro ao enviar mensagem." });
+    }
+});
+
+// Listar conversas do usuário logado
+app.get("/api/mensagens/conversas", authMiddleware, (req, res) => {
+    try {
+        // Buscar conversas (usuários com quem trocou mensagens)
+        const conversas = db.prepare(`
+            SELECT DISTINCT
+                u.id as usuario_id,
+                u.nome,
+                u.foto,
+                u.curso,
+                u.tipo,
+                (SELECT m.mensagem FROM mensagens m 
+                 WHERE (m.remetente_id = ? AND m.destinatario_id = u.id)
+                    OR (m.remetente_id = u.id AND m.destinatario_id = ?)
+                 ORDER BY m.criado_em DESC LIMIT 1) as ultima_mensagem,
+                (SELECT m.criado_em FROM mensagens m 
+                 WHERE (m.remetente_id = ? AND m.destinatario_id = u.id)
+                    OR (m.remetente_id = u.id AND m.destinatario_id = ?)
+                 ORDER BY m.criado_em DESC LIMIT 1) as ultimo_tempo,
+                (SELECT COUNT(*) FROM mensagens m 
+                 WHERE m.remetente_id = u.id AND m.destinatario_id = ? AND m.lida = 0) as nao_lidas
+            FROM usuarios u
+            WHERE u.id != ?
+            AND EXISTS (
+                SELECT 1 FROM mensagens m 
+                WHERE (m.remetente_id = ? AND m.destinatario_id = u.id)
+                   OR (m.remetente_id = u.id AND m.destinatario_id = ?)
+            )
+            ORDER BY ultimo_tempo DESC
+        `).all(req.usuario.id, req.usuario.id, req.usuario.id, req.usuario.id, req.usuario.id, req.usuario.id, req.usuario.id, req.usuario.id);
+
+        res.json(conversas);
+    } catch (erro) {
+        console.error("Erro ao listar conversas:", erro);
+        res.status(500).json({ erro: "Erro ao listar conversas." });
+    }
+});
+
+// Buscar mensagens com um usuário específico
+app.get("/api/mensagens/:usuarioId", authMiddleware, (req, res) => {
+    try {
+        const { usuarioId } = req.params;
+
+        // Marcar mensagens recebidas como lidas
+        db.prepare(`
+            UPDATE mensagens SET lida = 1
+            WHERE remetente_id = ? AND destinatario_id = ? AND lida = 0
+        `).run(usuarioId, req.usuario.id);
+
+        // Buscar mensagens
+        const mensagens = db.prepare(`
+            SELECT m.id, m.remetente_id, m.mensagem, m.lida, m.criado_em,
+                   u.nome as remetente_nome
+            FROM mensagens m
+            JOIN usuarios u ON m.remetente_id = u.id
+            WHERE (m.remetente_id = ? AND m.destinatario_id = ?)
+               OR (m.remetente_id = ? AND m.destinatario_id = ?)
+            ORDER BY m.criado_em ASC
+        `).all(req.usuario.id, usuarioId, usuarioId, req.usuario.id);
+
+        res.json(mensagens);
+    } catch (erro) {
+        console.error("Erro ao buscar mensagens:", erro);
+        res.status(500).json({ erro: "Erro ao buscar mensagens." });
+    }
+});
+
 // ===== ROTAS ADMIN =====
 
 // Login do administrador
