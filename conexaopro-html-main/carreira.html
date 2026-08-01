@@ -167,6 +167,49 @@
             font-size: 16px;
         }
 
+        /* Busca na trilha */
+        .busca-trilha {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 480px;
+            margin: 20px auto 0;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            padding: 12px 16px;
+            border-radius: var(--radius-pill);
+            color: var(--text-muted);
+        }
+
+        .busca-trilha input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .busca-trilha input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .timeline-item.oculto {
+            display: none !important;
+        }
+
+        .info-busca-trilha {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            margin: 20px 0;
+            padding: 30px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+        }
+
         /* ---------- TIMELINE ---------- */
         .timeline {
             position: relative;
@@ -385,6 +428,11 @@
         <section class="cabecalho-secao">
             <h2>🛤️ Sua Trilha: Desenvolvedor Full Stack</h2>
             <p>Acompanhe seu progresso e veja os próximos passos para dominar o mercado.</p>
+            <div class="busca-trilha">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="busca-trilha-input" type="search" placeholder="Pesquisar etapa da trilha..." aria-label="Pesquisar etapa da trilha">
+            </div>
+            <div id="info-busca-trilha" class="info-busca-trilha" style="display:none;"></div>
         </section>
 
         <main class="timeline">
@@ -499,6 +547,49 @@
 
             document.getElementById("avatar").textContent = iniciais;
         }
+
+        // ===== BUSCA NA TRILHA =====
+        document.addEventListener("DOMContentLoaded", function() {
+            const inputBusca = document.getElementById("busca-trilha-input");
+            const timelineItems = document.querySelectorAll(".timeline-item");
+            const infoBusca = document.getElementById("info-busca-trilha");
+
+            function filtrarTrilha() {
+                const termo = (inputBusca.value || "").toLowerCase().trim();
+                let visiveis = 0;
+
+                timelineItems.forEach(item => {
+                    const titulo = (item.querySelector("h3")?.textContent || "").toLowerCase();
+                    const descricao = (item.querySelector("p")?.textContent || "").toLowerCase();
+                    const habilidades = Array.from(item.querySelectorAll(".habilidades-trilha span")).map(s => s.textContent.toLowerCase());
+                    const status = (item.querySelector(".status-tag")?.textContent || "").toLowerCase();
+
+                    const match = !termo ||
+                        titulo.includes(termo) ||
+                        descricao.includes(termo) ||
+                        habilidades.some(h => h.includes(termo)) ||
+                        status.includes(termo);
+
+                    item.classList.toggle("oculto", !match);
+                    if (match) visiveis++;
+                });
+
+                if (termo) {
+                    if (visiveis === 0) {
+                        infoBusca.textContent = `Nenhuma etapa encontrada para "${termo}"`;
+                        infoBusca.style.display = "block";
+                    } else {
+                        infoBusca.style.display = "none";
+                    }
+                } else {
+                    infoBusca.style.display = "none";
+                }
+            }
+
+            if (inputBusca) {
+                inputBusca.addEventListener("input", filtrarTrilha);
+            }
+        });
     </SCript>
 </body>
 
