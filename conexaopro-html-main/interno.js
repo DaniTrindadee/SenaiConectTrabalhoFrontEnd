@@ -5,9 +5,13 @@ const CHAVE_NOTIFICACOES = "@conexaopro:notificacoes";
 let sessao = null;
 let imagemSelecionada = "";
 let publicacaoEmEdicao = null;
+let buscaGlobalIniciada = false;
 
 // ===== SESSÃO VIA API =====
 (async function inicializarSessao() {
+    // Inicializar a busca global imediatamente (independente da sessão)
+    iniciarBuscaGlobal();
+
     sessao = getSessao();
     if (!sessao) {
         window.location.replace("login.html");
@@ -15,13 +19,14 @@ let publicacaoEmEdicao = null;
     }
 
     // Validar sessão com o backend
-    try {
-        await apiValidarSessao();
-        sessao = getSessao(); // Atualizar dados
-    } catch {
+    const usuario = await apiValidarSessao();
+    if (!usuario) {
+        // apiValidarSessao limpa os dados e retorna null se falhar (nunca lança exceção)
         window.location.replace("login.html");
         return;
     }
+
+    sessao = getSessao(); // Atualizar dados com o retorno do backend
 
     // Inicializar interface após validar sessão
     inicializarInterface();
@@ -48,10 +53,15 @@ function inicializarInterface() {
     const primeiroNome = sessao.nome.split(" ")[0];
     const inicial = primeiroNome.charAt(0).toUpperCase();
 
-    document.querySelector("#nome-usuario").textContent = sessao.nome;
-    document.querySelector("#curso-usuario").textContent = sessao.curso;
-    document.querySelector("#primeiro-nome").textContent = primeiroNome;
-    document.querySelector("#nome-topo").textContent = primeiroNome;
+    // Elementos podem não existir em todas as páginas (ex.: eventos.html).
+    const elNomeUsuario = document.querySelector("#nome-usuario");
+    const elCursoUsuario = document.querySelector("#curso-usuario");
+    const elPrimeiroNome = document.querySelector("#primeiro-nome");
+    const elNomeTopo = document.querySelector("#nome-topo");
+    if (elNomeUsuario) elNomeUsuario.textContent = sessao.nome;
+    if (elCursoUsuario) elCursoUsuario.textContent = sessao.curso;
+    if (elPrimeiroNome) elPrimeiroNome.textContent = primeiroNome;
+    if (elNomeTopo) elNomeTopo.textContent = primeiroNome;
 
     ["#avatar", "#avatar-publicacao", "#avatar-topo"].forEach((seletor) => {
         aplicarAvatar(
@@ -161,19 +171,132 @@ function obterNotificacoes() {
 }
 
 function salvarNotificacoes(notificacoes) {
-    salvarJSON(CHAVE_NOTIFICACOES, notificacoes.slice(0, 30));
+    salvarJSON(CHAVE_NOTIFICACOES, notificacoes.slice(0, 50));
 }
 
-function adicionarNotificacao(titulo, texto, tipo = "geral") {
+// ===== NOTIFICAÇÕES DE SOLICITAÇÕES DE CONEXÃO (BACKEND) =====
+
+// IDs de notificações de conexão já processadas (para evitar duplicatas)
+const CHAVE_CONEXOES_NOTIFICADAS = "@conexaopro:conexoes_notificadas";
+let conexoesJaNotificadas = new Set();
+let ultimasSolicitacoesPendentes = [];
+
+function carregarConexoesNotificadas() {
+    try {
+        const raw = localStorage.getItem(CHAVE_CONEXOES_NOTIFICADAS);
+        if (!raw) {
+            conexoesJaNotificadas = new Set();
+            return;
+        }
+        const dados = JSON.parse(raw);
+        // Migração: verificar se há chaves antigas (numéricas).
+        // Se sim, limpa completamente o armazenamento para recomeçar.
+        const temChaveAntiga = Array.isArray(dados) && dados.some(chave => /^\d+$/.test(String(chave)));
+        if (temChaveAntiga) {
+            localStorage.removeItem(CHAVE_CONEXOES_NOTIFICADAS);
+            conexoesJaNotificadas = new Set();
+            return;
+        }
+        const lista = Array.isArray(dados)
+            ? dados.filter(chave => typeof chave === "string" && !/^\d+$/.test(chave))
+            : [];
+        conexoesJaNotificadas = new Set(lista);
+    } catch {
+        conexoesJaNotificadas = new Set();
+    }
+}
+
+function salvarConexoesNotificadas() {
+    localStorage.setItem(CHAVE_CONEXOES_NOTIFICADAS, JSON.stringify([...conexoesJaNotificadas]));
+}
+
+async function verificarSolicitacoesConexao() {
+    if (!sessao) return;
+    try {
+        const dados = await apiListarConexoes();
+        const pendentes = dados.pendentes || [];
+
+        // IDs das solicitações pendentes atuais (chave baseada no ID da conexão).
+        // Usar o ID da conexão (e não o do usuário) permite que pedidos distintos
+        // do mesmo usuário gerem notificações próprias.
+        const idsPendentes = new Set(pendentes.map(c => `c-${c.id}`));
+
+        // Limpar chaves de conexões que não estão mais pendentes (aceitas ou
+        // recusadas). Assim, um novo pedido da mesma pessoa volta a notificar.
+        [...conexoesJaNotificadas].forEach(chave => {
+            if (!idsPendentes.has(chave)) {
+                conexoesJaNotificadas.delete(chave);
+            }
+        });
+
+        // Detectar solicitações ainda não notificadas
+        const novasSolicitacoes = pendentes.filter(c => {
+            const chave = `c-${c.id}`;
+            return !conexoesJaNotificadas.has(chave);
+        });
+
+        // Adicionar notificações para cada nova solicitação
+        novasSolicitacoes.forEach(c => {
+            conexoesJaNotificadas.add(`c-${c.id}`);
+            adicionarNotificacao(
+                `Nova solicitação de ${c.nome.split(" ")[0]}`,
+                `${c.nome} ${c.curso ? `· ${c.curso}` : ""} quer se conectar com você!`,
+                "conexao",
+                { conexaoId: c.id, usuarioId: c.usuario_id, nome: c.nome }
+            );
+        });
+
+        if (novasSolicitacoes.length > 0) {
+            salvarConexoesNotificadas();
+        }
+
+        ultimasSolicitacoesPendentes = pendentes;
+
+        // Atualizar badge do botão de notificações
+        const notificacoes = obterNotificacoes();
+        const totalNaoLidas = notificacoes.filter(n => !n.lida).length;
+        const contador = document.querySelector("#contador-notificacoes");
+        if (contador) {
+            contador.textContent = String(totalNaoLidas);
+            contador.hidden = totalNaoLidas === 0;
+        }
+    } catch (erro) {
+        // Silencioso - pode falhar se o servidor não estiver respondendo
+        console.debug("Verificação de conexões:", erro.message);
+    }
+}
+
+// Iniciar polling de solicitações de conexão (a cada 20s)
+let intervaloPollingConexoes = null;
+
+function iniciarPollingConexoes() {
+    if (intervaloPollingConexoes) return;
+    carregarConexoesNotificadas();
+    verificarSolicitacoesConexao(); // Primeira verificação imediata
+    intervaloPollingConexoes = setInterval(verificarSolicitacoesConexao, 20000);
+}
+
+function pararPollingConexoes() {
+    if (intervaloPollingConexoes) {
+        clearInterval(intervaloPollingConexoes);
+        intervaloPollingConexoes = null;
+    }
+}
+
+function adicionarNotificacao(titulo, texto, tipo = "geral", dadosExtra = null) {
     const notificacoes = obterNotificacoes();
-    notificacoes.unshift({
+    const notif = {
         id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
         titulo,
         texto,
         tipo,
         lida: false,
         data: new Date().toISOString()
-    });
+    };
+    if (dadosExtra) {
+        notif.dadosConexao = dadosExtra;
+    }
+    notificacoes.unshift(notif);
     salvarNotificacoes(notificacoes);
     renderizarNotificacoes();
 }
@@ -262,12 +385,36 @@ function renderizarNotificacoes() {
         lista.innerHTML = '<p class="notificacoes-vazias">Nenhuma notificação por enquanto.</p>';
         return;
     }
-    lista.innerHTML = notificacoes.map((item) => `
-        <article class="item-notificacao ${item.tipo === "conquista" ? "conquista" : ""} ${item.lida ? "" : "nao-lida"}" data-id="${item.id}">
-            <span class="icone"><i class="fa-solid ${item.tipo === "conquista" ? "fa-trophy" : "fa-bell"}"></i></span>
-            <div><strong>${escaparHTML(item.titulo)}</strong><p>${escaparHTML(item.texto)}</p></div>
-            <time>${formatarTempoNotificacao(item.data)}</time>
-        </article>`).join("");
+    lista.innerHTML = notificacoes.map((item) => {
+        let iconeClasse = "fa-bell";
+        let classeExtra = "";
+        let htmlAcoes = "";
+
+        if (item.tipo === "conquista") {
+            iconeClasse = "fa-trophy";
+            classeExtra = "conquista";
+        } else if (item.tipo === "conexao") {
+            iconeClasse = "fa-user-plus";
+            classeExtra = "conexao";
+            htmlAcoes = `
+                <div class="notificacao-acoes">
+                    <button class="notif-aceitar" data-notif-id="${item.id}"><i class="fa-solid fa-check"></i> Aceitar</button>
+                    <button class="notif-recusar" data-notif-id="${item.id}"><i class="fa-solid fa-xmark"></i> Recusar</button>
+                </div>
+            `;
+        }
+
+        return `
+            <article class="item-notificacao ${classeExtra} ${item.lida ? "" : "nao-lida"}" data-id="${item.id}">
+                <span class="icone"><i class="fa-solid ${iconeClasse}"></i></span>
+                <div>
+                    <strong>${escaparHTML(item.titulo)}</strong>
+                    <p>${escaparHTML(item.texto)}</p>
+                    ${htmlAcoes}
+                </div>
+                <time>${formatarTempoNotificacao(item.data)}</time>
+            </article>`;
+    }).join("");
 }
 
 function iniciarNotificacoes() {
@@ -506,6 +653,7 @@ function criarHTMLPublicacao(publicacaoOriginal) {
 }
 
 function renderizarPublicacoesSalvas() {
+    if (!primeiraPublicacaoFixa) return;
     document.querySelectorAll(".publicacao-usuario").forEach((elemento) => elemento.remove());
     const publicacoes = carregarPublicacoes().map(normalizarPublicacao);
     publicacoes.forEach((publicacao) => {
@@ -744,7 +892,55 @@ document.querySelector("#lista-notificacoes")?.addEventListener("click", (evento
     renderizarNotificacoes();
 });
 
-document.addEventListener("click", (evento) => {
+document.addEventListener("click", async (evento) => {
+    // Aceitar solicitação de conexão pela notificação
+    const btnAceitar = evento.target.closest(".notif-aceitar");
+    if (btnAceitar) {
+        evento.stopPropagation();
+        const notifId = btnAceitar.dataset.notifId;
+        const notificacoes = obterNotificacoes();
+        const notif = notificacoes.find(n => n.id === notifId);
+        if (!notif || !notif.dadosConexao) return;
+
+        try {
+            await apiResponderConexao(notif.dadosConexao.conexaoId, "aceitar");
+            // Marcar como lida e atualizar
+            const atualizadas = notificacoes.map(n =>
+                n.id === notifId ? { ...n, lida: true, texto: "✅ Conexão aceita! Vocês agora estão conectados." } : n
+            );
+            salvarNotificacoes(atualizadas);
+            renderizarNotificacoes();
+            mostrarAviso("Conexão aceita com sucesso!");
+            carregarConexoesSidebar();
+        } catch (erro) {
+            mostrarAviso("Erro ao aceitar: " + erro.message);
+        }
+        return;
+    }
+
+    // Recusar solicitação de conexão pela notificação
+    const btnRecusar = evento.target.closest(".notif-recusar");
+    if (btnRecusar) {
+        evento.stopPropagation();
+        const notifId = btnRecusar.dataset.notifId;
+        const notificacoes = obterNotificacoes();
+        const notif = notificacoes.find(n => n.id === notifId);
+        if (!notif || !notif.dadosConexao) return;
+
+        try {
+            await apiResponderConexao(notif.dadosConexao.conexaoId, "recusar");
+            const atualizadas = notificacoes.map(n =>
+                n.id === notifId ? { ...n, lida: true, texto: "❌ Solicitação recusada." } : n
+            );
+            salvarNotificacoes(atualizadas);
+            renderizarNotificacoes();
+            mostrarAviso("Solicitação recusada.");
+        } catch (erro) {
+            mostrarAviso("Erro ao recusar: " + erro.message);
+        }
+        return;
+    }
+
     if (!painelNotificacoes?.classList.contains("aberto")) return;
     if (evento.target.closest("#painel-notificacoes") || evento.target.closest("#abrir-notificacoes")) return;
     painelNotificacoes.classList.remove("aberto");
@@ -765,4 +961,295 @@ function iniciarRestoDaInterface() {
     renderizarPublicacoesSalvas();
     iniciarNotificacoes();
     verificarConquistas();
+    iniciarBuscaGlobal();
+    iniciarPollingConexoes();
+}
+
+// ===== BUSCA GLOBAL (PESSOAS, PROJETOS, CURSOS) =====
+
+const DADOS_CURSOS_BUSCA = [
+    { titulo: "HTML e CSS", descricao: "Aprenda a criar sites modernos.", icone: "fa-html5", url: "cursos.html" },
+    { titulo: "JavaScript", descricao: "Domine programação Web.", icone: "fa-js", url: "cursos.html" },
+    { titulo: "React", descricao: "Desenvolvimento Front-end moderno.", icone: "fa-react", url: "cursos.html" },
+    { titulo: "Python", descricao: "Programação Back-end.", icone: "fa-python", url: "cursos.html" },
+    { titulo: "Java", descricao: "POO e aplicações corporativas.", icone: "fa-java", url: "cursos.html" },
+    { titulo: "Banco de Dados", descricao: "SQL e Modelagem.", icone: "fa-database", url: "cursos.html" },
+];
+
+const DADOS_EVENTOS_BUSCA = [
+    { titulo: "Mostra de Projetos Front-end", descricao: "Apresentação dos projetos finais da turma de Programador Front-end", tipo: "apresentacao", data: "30 JUL · 19h00", local: "Auditório Principal", url: "eventos.html" },
+    { titulo: "Oficina de GitHub e Colaboração", descricao: "Aprenda a usar Git e GitHub na prática", tipo: "oficina", data: "02 AGO · 14h00", local: "Laboratório 3", url: "eventos.html" },
+    { titulo: "Palestra: Tendências de IA na Educação", descricao: "Como a inteligência artificial está transformando a educação profissional", tipo: "palestra", data: "05 AGO · 10h00", local: "Auditório Principal", url: "eventos.html" },
+    { titulo: "Hackathon Inovação SENAI 2026", descricao: "24 horas de programação e inovação em equipes", tipo: "hackathon", data: "15 AGO · 08h00", local: "Espaço Maker", url: "eventos.html" },
+    { titulo: "Cerimônia de Formatura - Turma 2026", descricao: "Cerimônia de formatura dos cursos do SENAI", tipo: "institucional", data: "20 AGO · 18h00", local: "Centro de Eventos", url: "eventos.html" },
+    { titulo: "Workshop: UX Design para Iniciantes", descricao: "Introdução ao design de experiência do usuário", tipo: "workshop", data: "08 AGO · 09h00", local: "Laboratório 1", url: "eventos.html" },
+    { titulo: "Exposição de Robótica Industrial", descricao: "Demonstrações ao vivo de robôs e automação", tipo: "exibicao", data: "12 AGO · 10h00", local: "Hangar de Exposições", url: "eventos.html" },
+    { titulo: "Feira de Inovação e Projetos", descricao: "Projetos de todas as áreas: mecânica, informática, eletrônica e logística", tipo: "exibicao", data: "25 AGO · 09h00", local: "Área Externa", url: "eventos.html" },
+];
+
+function getProjetosBusca() {
+    const publicacoes = carregarPublicacoes();
+    const projetos = publicacoes
+        .filter(p => p.tipo === "Projeto")
+        .map(p => ({
+            titulo: p.texto.slice(0, 60) + (p.texto.length > 60 ? "..." : ""),
+            descricao: `Por ${p.nome}`,
+            autor: p.nome,
+            url: `perfil.html`
+        }));
+
+    // Projetos estáticos
+    const projetosEstaticos = [
+        { titulo: "Sistema Financeiro", descricao: "Dashboard de controle financeiro pessoal", autor: "Everton Salles", url: "projetosv2.html" },
+        { titulo: "Senai Food", descricao: "App de delivery para cantinas universitárias", autor: "Maria Silva", url: "projetosv2.html" },
+        { titulo: "DevPad Online", descricao: "Editor de código colaborativo no navegador", autor: "Ricardo Santos", url: "projetosv2.html" },
+        { titulo: "Portfólio Profissional", descricao: "Site responsivo com animações", autor: "Ana Beatriz", url: "projetosv2.html" },
+        { titulo: "API Escolar", descricao: "API REST para gerenciamento escolar", autor: "Lucas Oliveira", url: "projetosv2.html" },
+        { titulo: "FitLife", descricao: "App de acompanhamento de treinos", autor: "Camila Souza", url: "projetosv2.html" },
+        { titulo: "Chat em Tempo Real", descricao: "Mensagens instantâneas com salas", autor: "João Pedro", url: "projetosv2.html" },
+        { titulo: "TravelGo", descricao: "App de organização de viagens", autor: "Fernanda Costa", url: "projetosv2.html" },
+    ];
+
+    return [...projetosEstaticos, ...projetos];
+}
+
+function iniciarBuscaGlobal() {
+    const inputBusca = document.querySelector("#busca");
+    if (!inputBusca) return;
+
+    // Evitar dupla inicialização (chamado no início e após validar sessão)
+    if (buscaGlobalIniciada) return;
+    buscaGlobalIniciada = true;
+
+    // Criar container de resultados
+    let painelResultados = document.querySelector("#resultados-busca");
+    if (!painelResultados) {
+        painelResultados = document.createElement("div");
+        painelResultados.id = "resultados-busca";
+        painelResultados.className = "resultados-busca";
+        painelResultados.setAttribute("aria-label", "Resultados da pesquisa");
+        inputBusca.parentElement.style.position = "relative";
+        inputBusca.parentElement.appendChild(painelResultados);
+    }
+
+    let timeoutBusca = null;
+    let pessoasCache = [];
+    let indiceSelecionado = -1;
+
+    // Carregar pessoas uma vez
+    async function carregarPessoas() {
+        try {
+            pessoasCache = await apiListarUsuarios();
+        } catch {
+            pessoasCache = [];
+        }
+    }
+    carregarPessoas();
+
+    function fecharResultados() {
+        painelResultados.classList.remove("aberto");
+        painelResultados.innerHTML = "";
+        indiceSelecionado = -1;
+    }
+
+    function navegarPara(url) {
+        fecharResultados();
+        inputBusca.value = "";
+        window.location.href = url;
+    }
+
+    function renderizarResultados(termo) {
+        const termoBusca = termo.trim().toLowerCase();
+        if (!termoBusca || termoBusca.length < 2) {
+            fecharResultados();
+            return;
+        }
+
+        // Filtrar pessoas
+        const pessoas = pessoasCache.filter(u =>
+            u.nome.toLowerCase().includes(termoBusca) ||
+            (u.curso || "").toLowerCase().includes(termoBusca) ||
+            u.matricula.toLowerCase().includes(termoBusca)
+        ).slice(0, 5);
+
+        // Filtrar projetos
+        const projetos = getProjetosBusca().filter(p =>
+            p.titulo.toLowerCase().includes(termoBusca) ||
+            p.descricao.toLowerCase().includes(termoBusca) ||
+            (p.autor || "").toLowerCase().includes(termoBusca)
+        ).slice(0, 4);
+
+        // Filtrar cursos
+        const cursos = DADOS_CURSOS_BUSCA.filter(c =>
+            c.titulo.toLowerCase().includes(termoBusca) ||
+            c.descricao.toLowerCase().includes(termoBusca)
+        ).slice(0, 3);
+
+        // Filtrar eventos
+        const eventos = DADOS_EVENTOS_BUSCA.filter(e =>
+            e.titulo.toLowerCase().includes(termoBusca) ||
+            e.descricao.toLowerCase().includes(termoBusca) ||
+            e.local.toLowerCase().includes(termoBusca) ||
+            e.tipo.toLowerCase().includes(termoBusca)
+        ).slice(0, 3);
+
+        const total = pessoas.length + projetos.length + cursos.length + eventos.length;
+        if (total === 0) {
+            painelResultados.innerHTML = `
+                <div class="resultado-vazio">
+                    <i class="fa-solid fa-search"></i>
+                    <span>Nenhum resultado encontrado para "<strong>${escaparHTML(termoBusca)}</strong>"</span>
+                </div>
+            `;
+            painelResultados.classList.add("aberto");
+            indiceSelecionado = -1;
+            return;
+        }
+
+        let html = "";
+        let idx = 0;
+
+        if (pessoas.length > 0) {
+            html += `<div class="resultado-categoria"><i class="fa-solid fa-users"></i> Pessoas</div>`;
+            pessoas.forEach(p => {
+                const inicial = p.nome.charAt(0).toUpperCase();
+                const foto = p.foto ? `<img src="${p.foto}" alt="">` : inicial;
+                html += `
+                    <div class="resultado-item" data-index="${idx}" data-url="conexoes.html?usuario=${p.id}" tabindex="-1">
+                        <span class="resultado-avatar">${foto}</span>
+                        <div class="resultado-info">
+                            <strong>${escaparHTML(p.nome)}</strong>
+                            <small>${escaparHTML(p.curso || "Membro da comunidade")}</small>
+                        </div>
+                    </div>
+                `;
+                idx++;
+            });
+        }
+
+        if (projetos.length > 0) {
+            html += `<div class="resultado-categoria"><i class="fa-solid fa-diagram-project"></i> Projetos</div>`;
+            projetos.forEach(p => {
+                html += `
+                    <div class="resultado-item" data-index="${idx}" data-url="${p.url}" tabindex="-1">
+                        <span class="resultado-icone"><i class="fa-solid fa-code"></i></span>
+                        <div class="resultado-info">
+                            <strong>${escaparHTML(p.titulo)}</strong>
+                            <small>${escaparHTML(p.descricao)}</small>
+                        </div>
+                    </div>
+                `;
+                idx++;
+            });
+        }
+
+        if (cursos.length > 0) {
+            html += `<div class="resultado-categoria"><i class="fa-solid fa-graduation-cap"></i> Cursos</div>`;
+            cursos.forEach(c => {
+                const isBrand = !c.icone.startsWith("fa-solid");
+                const iconeClasse = isBrand ? `fa-brands ${c.icone}` : c.icone;
+                html += `
+                    <div class="resultado-item" data-index="${idx}" data-url="${c.url}" tabindex="-1">
+                        <span class="resultado-icone"><i class="${iconeClasse}"></i></span>
+                        <div class="resultado-info">
+                            <strong>${escaparHTML(c.titulo)}</strong>
+                            <small>${escaparHTML(c.descricao)}</small>
+                        </div>
+                    </div>
+                `;
+                idx++;
+            });
+        }
+
+        if (eventos.length > 0) {
+            html += `<div class="resultado-categoria"><i class="fa-solid fa-calendar-check"></i> Eventos</div>`;
+            eventos.forEach(e => {
+                html += `
+                    <div class="resultado-item" data-index="${idx}" data-url="${e.url}" tabindex="-1">
+                        <span class="resultado-icone"><i class="fa-solid fa-calendar-day"></i></span>
+                        <div class="resultado-info">
+                            <strong>${escaparHTML(e.titulo)}</strong>
+                            <small>${escaparHTML(e.data)} · ${escaparHTML(e.local)}</small>
+                        </div>
+                    </div>
+                `;
+                idx++;
+            });
+        }
+
+        // Rodapé com atalho
+        html += `
+            <div class="resultado-footer">
+                <span><i class="fa-solid fa-arrow-up"></i><i class="fa-solid fa-arrow-down"></i> Navegar · <i class="fa-solid fa-return"></i> Abrir · <kbd>Esc</kbd> Fechar</span>
+            </div>
+        `;
+
+        painelResultados.innerHTML = html;
+        painelResultados.classList.add("aberto");
+        indiceSelecionado = -1;
+
+        // Eventos de clique
+        painelResultados.querySelectorAll(".resultado-item").forEach(item => {
+            item.addEventListener("click", () => {
+                navegarPara(item.dataset.url);
+            });
+            item.addEventListener("mouseenter", () => {
+                indiceSelecionado = parseInt(item.dataset.index);
+                atualizarDestaque();
+            });
+        });
+    }
+
+    function atualizarDestaque() {
+        painelResultados.querySelectorAll(".resultado-item").forEach(item => {
+            item.classList.toggle("destacado", parseInt(item.dataset.index) === indiceSelecionado);
+        });
+        const item = painelResultados.querySelector(`.resultado-item[data-index="${indiceSelecionado}"]`);
+        if (item) item.scrollIntoView({ block: "nearest" });
+    }
+
+    // Input event
+    inputBusca.addEventListener("input", () => {
+        clearTimeout(timeoutBusca);
+        timeoutBusca = setTimeout(() => {
+            renderizarResultados(inputBusca.value);
+        }, 250);
+    });
+
+    // Focus
+    inputBusca.addEventListener("focus", () => {
+        if (inputBusca.value.trim().length >= 2) {
+            renderizarResultados(inputBusca.value);
+        }
+    });
+
+    // Teclado
+    inputBusca.addEventListener("keydown", (e) => {
+        const itens = painelResultados.querySelectorAll(".resultado-item");
+        if (itens.length === 0) return;
+
+        if (e.key === "ArrowDown") {
+            e.preventDefault();
+            indiceSelecionado = Math.min(indiceSelecionado + 1, itens.length - 1);
+            atualizarDestaque();
+        } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            indiceSelecionado = Math.max(indiceSelecionado - 1, 0);
+            atualizarDestaque();
+        } else if (e.key === "Enter" && indiceSelecionado >= 0) {
+            e.preventDefault();
+            const item = itens[indiceSelecionado];
+            if (item) navegarPara(item.dataset.url);
+        } else if (e.key === "Escape") {
+            fecharResultados();
+            inputBusca.blur();
+        }
+    });
+
+    // Fechar ao clicar fora
+    document.addEventListener("click", (e) => {
+        if (!e.target.closest(".pesquisa") && !e.target.closest("#resultados-busca")) {
+            fecharResultados();
+        }
+    });
 }
