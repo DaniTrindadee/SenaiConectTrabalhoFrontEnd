@@ -204,6 +204,19 @@
             border-color: var(--accent-red);
         }
 
+        /* Indicador de status online/offline */
+        .status-indicator {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid var(--bg-panel);
+        }
+        .status-indicator.online { background: var(--accent-green); }
+        .status-indicator.offline { background: var(--text-muted); }
+
         .chat-container {
             flex: 1;
             display: flex;
@@ -223,6 +236,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            flex-shrink: 0;
         }
 
         .sidebar-header {
@@ -281,34 +295,57 @@
             font-size: 14px;
         }
 
-        .lista-conversas {
+        .sidebar-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-subtle);
+            flex-shrink: 0;
+        }
+        .sidebar-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: 0.2s;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            font-family: inherit;
+        }
+        .sidebar-tab:hover { color: var(--text-secondary); }
+        .sidebar-tab.ativo { color: var(--accent-blue); border-bottom-color: var(--accent-blue); }
+
+        .sidebar-panel {
             flex: 1;
             overflow-y: auto;
-            padding: 10px;
+            padding: 8px;
+            display: none;
         }
+        .sidebar-panel.ativo { display: block; }
 
-        .lista-conversas::-webkit-scrollbar {
+        .sidebar-panel::-webkit-scrollbar {
             width: 4px;
         }
-
-        .lista-conversas::-webkit-scrollbar-thumb {
+        .sidebar-panel::-webkit-scrollbar-thumb {
             background: var(--border-subtle);
             border-radius: 10px;
         }
 
-        .item-conversa {
+        .item-conversa, .item-perfil-chat {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px;
+            padding: 10px 12px;
             border-radius: var(--radius-md);
             cursor: pointer;
             transition: 0.2s;
             border: 1px solid transparent;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
-        .item-conversa:hover {
+        .item-conversa:hover, .item-perfil-chat:hover {
             background: rgba(255, 255, 255, 0.03);
         }
 
@@ -319,8 +356,8 @@
 
         .avatar-conversa {
             position: relative;
-            width: 48px;
-            height: 48px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             background: var(--bg-panel-light);
             flex-shrink: 0;
@@ -328,7 +365,7 @@
             align-items: center;
             justify-content: center;
             font-weight: 600;
-            font-size: 16px;
+            font-size: 15px;
         }
 
         .info-conversa {
@@ -340,12 +377,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .nome-conversa {
             font-weight: 600;
-            font-size: 15px;
+            font-size: 14px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -357,7 +394,7 @@
         }
 
         .previa-conversa {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-secondary);
             white-space: nowrap;
             overflow: hidden;
@@ -372,6 +409,18 @@
             padding: 2px 6px;
             border-radius: 10px;
             margin-left: 5px;
+        }
+
+        .curso-tag {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .contador-online {
+            font-size: 11px;
+            color: var(--accent-green);
+            margin-left: auto;
         }
 
         .chat-main {
@@ -757,8 +806,15 @@
                     <input type="text" id="busca-conversa" placeholder="Buscar conversa...">
                 </div>
             </div>
-            <div class="lista-conversas" id="lista-conversas">
-                <div class="carregando">Carregando conversas...</div>
+            <div class="sidebar-tabs">
+                <button class="sidebar-tab ativo" data-panel="conversas">Conversas</button>
+                <button class="sidebar-tab" data-panel="perfis">Perfis</button>
+            </div>
+            <div class="sidebar-panel ativo" id="panel-conversas">
+                <div class="carregando" id="loading-conversas">Carregando conversas...</div>
+            </div>
+            <div class="sidebar-panel" id="panel-perfis">
+                <div class="carregando" id="loading-perfis">Carregando perfis...</div>
             </div>
         </aside>
 
@@ -817,7 +873,34 @@
         let conversas = [];
         let conversaAtiva = null; // { usuario_id, nome }
         let usuariosDisponiveis = [];
+        let perfis = [];
         let intervaloAtualizacao = null;
+
+        // Chave para rastrear presença online no localStorage
+        const PRESENCA_KEY = "@conexaopro:presenca";
+        const PRESENCA_TIMEOUT = 15000; // 15s sem atualizar = offline
+
+        // ===== PRESENÇA (ONLINE/OFFLINE) =====
+        function getPresenca() {
+            try {
+                return JSON.parse(localStorage.getItem(PRESENCA_KEY)) || {};
+            } catch {
+                return {};
+            }
+        }
+
+        function atualizarPresenca() {
+            if (!sessao) return;
+            const presenca = getPresenca();
+            presenca[sessao.id] = Date.now();
+            localStorage.setItem(PRESENCA_KEY, JSON.stringify(presenca));
+        }
+
+        function estaOnline(usuarioId, presenca) {
+            const ultimo = presenca[usuarioId];
+            if (!ultimo) return false;
+            return (Date.now() - ultimo) < PRESENCA_TIMEOUT;
+        }
 
         // ===== INICIALIZAÇÃO =====
         (async function inicializar() {
@@ -840,15 +923,23 @@
             document.getElementById('topo-avatar').textContent = inicial;
             document.getElementById('topo-nome').textContent = sessao.nome.split(' ')[0];
 
+            // Marcar presença online
+            atualizarPresenca();
+
             // Carregar conversas
             await carregarConversas();
 
+            // Carregar perfis
+            await carregarPerfis();
+
             // Iniciar polling a cada 5s
             intervaloAtualizacao = setInterval(() => {
+                atualizarPresenca();
                 if (conversaAtiva) {
                     carregarMensagens(conversaAtiva.usuario_id, false);
                 }
                 carregarConversas(true);
+                atualizarStatusPerfis();
             }, 5000);
 
             // Event listeners
@@ -870,7 +961,118 @@
             });
 
             document.getElementById('busca-conversa').addEventListener('input', filtrarConversas);
+
+            // Abas da sidebar
+            document.querySelectorAll('.sidebar-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.sidebar-tab').forEach(t => t.classList.remove('ativo'));
+                    document.querySelectorAll('.sidebar-panel').forEach(p => p.classList.remove('ativo'));
+                    this.classList.add('ativo');
+                    const painel = this.dataset.panel;
+                    document.getElementById(`panel-${painel}`).classList.add('ativo');
+                });
+            });
+
+            // Marcar offline ao fechar/abandonar a página
+            window.addEventListener('beforeunload', () => {
+                const presenca = getPresenca();
+                delete presenca[sessao.id];
+                localStorage.setItem(PRESENCA_KEY, JSON.stringify(presenca));
+            });
         })();
+
+        // ===== PERFIS =====
+        async function carregarPerfis() {
+            const painel = document.getElementById('panel-perfis');
+            try {
+                const dados = await apiListarUsuarios();
+                perfis = Array.isArray(dados) ? dados : [];
+                renderizarPerfis();
+            } catch (erro) {
+                console.error('Erro ao carregar perfis:', erro);
+                painel.innerHTML = '<div class="sem-conexoes">Erro ao carregar perfis.</div>';
+            }
+        }
+
+        function renderizarPerfis() {
+            const painel = document.getElementById('panel-perfis');
+            const presenca = getPresenca();
+
+            if (perfis.length === 0) {
+                painel.innerHTML = `
+                    <div class="sem-conexoes">
+                        <p>Nenhum perfil encontrado.</p>
+                        <p style="font-size: 12px; margin-top: 8px;">Cadastre mais usuários para ver aqui!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let onlineCount = 0;
+            const html = perfis.map(u => {
+                const online = estaOnline(u.id, presenca);
+                if (online) onlineCount++;
+                const inicial = u.nome.charAt(0).toUpperCase();
+                const statusTexto = online ? 'Online agora' : 'Offline';
+                const statusClasse = online ? 'online' : 'offline';
+                return `
+                    <div class="item-perfil-chat" data-id="${u.id}" onclick="iniciarConversa(${u.id}, '${u.nome.replace(/'/g, "\\'")}')">
+                        <div class="avatar-conversa">
+                            ${inicial}
+                            <span class="status-indicator ${statusClasse}" title="${statusTexto}"></span>
+                        </div>
+                        <div class="info-conversa">
+                            <div class="topo-conversa">
+                                <span class="nome-conversa">${escaparHTML(u.nome)}</span>
+                                <span class="contador-online">${online ? '<i class="fa-solid fa-circle" style="font-size:8px; color: var(--accent-green);"></i> online' : '<i class="fa-regular fa-circle" style="font-size:8px; color: var(--text-muted);"></i> offline'}</span>
+                            </div>
+                            <div class="curso-tag">${escaparHTML(u.curso || 'Membro')}</div>
+                        </div>
+                        <i class="fa-solid fa-comment-dots" style="color: var(--text-muted); font-size: 14px;"></i>
+                    </div>
+                `;
+            }).join('');
+
+            painel.innerHTML = `
+                <div style="padding: 8px 12px 10px; font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-users"></i>
+                    ${perfis.length} perfis
+                    <span style="margin-left:auto; color: var(--accent-green);">
+                        <i class="fa-solid fa-circle" style="font-size:7px;"></i> ${onlineCount} online
+                    </span>
+                </div>
+                ${html}
+            `;
+        }
+
+        function atualizarStatusPerfis() {
+            const painel = document.getElementById('panel-perfis');
+            const presenca = getPresenca();
+            let onlineCount = 0;
+
+            document.querySelectorAll('#panel-perfis .item-perfil-chat').forEach(item => {
+                const id = parseInt(item.dataset.id);
+                const online = estaOnline(id, presenca);
+                if (online) onlineCount++;
+
+                const indicador = item.querySelector('.status-indicator');
+                const statusTexto = item.querySelector('.contador-online');
+                if (indicador) {
+                    indicador.classList.toggle('online', online);
+                    indicador.classList.toggle('offline', !online);
+                }
+                if (statusTexto) {
+                    statusTexto.innerHTML = online
+                        ? '<i class="fa-solid fa-circle" style="font-size:8px; color: var(--accent-green);"></i> online'
+                        : '<i class="fa-regular fa-circle" style="font-size:8px; color: var(--text-muted);"></i> offline';
+                }
+            });
+
+            const contador = painel.querySelector('div[style*="padding: 8px 12px"] span[style*="margin-left"]');
+            if (contador) {
+                contador.innerHTML = `<i class="fa-solid fa-circle" style="font-size:7px;"></i> ${onlineCount} online`;
+            }
+        }
 
         // ===== CONVERSAS =====
         async function carregarConversas(silencioso = false) {
@@ -907,7 +1109,7 @@
         }
 
         function renderizarConversas() {
-            const lista = document.getElementById('lista-conversas');
+            const lista = document.getElementById('panel-conversas');
 
             if (conversas.length === 0) {
                 lista.innerHTML = `
@@ -951,11 +1153,19 @@
 
         function filtrarConversas() {
             const termo = document.getElementById('busca-conversa').value.toLowerCase().trim();
-            const itens = document.querySelectorAll('.item-conversa');
 
-            itens.forEach(item => {
+            // Filtrar conversas
+            document.querySelectorAll('#panel-conversas .item-conversa').forEach(item => {
                 const nome = item.querySelector('.nome-conversa')?.textContent?.toLowerCase() || '';
                 item.style.display = nome.includes(termo) ? 'flex' : 'none';
+            });
+
+            // Filtrar perfis
+            document.querySelectorAll('#panel-perfis .item-perfil-chat').forEach(item => {
+                const nome = item.querySelector('.nome-conversa')?.textContent?.toLowerCase() || '';
+                const curso = item.querySelector('.curso-tag')?.textContent?.toLowerCase() || '';
+                const corresponde = !termo || nome.includes(termo) || curso.includes(termo);
+                item.style.display = corresponde ? 'flex' : 'none';
             });
         }
 
