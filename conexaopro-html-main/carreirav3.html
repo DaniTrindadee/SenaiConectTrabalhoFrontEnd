@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Senai Connect · Trilha de Carreira</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #05070E;
+            --bg-panel: #111827;
+            --bg-input: #0B1220;
+
+            --accent-blue: #2563EB;
+            --accent-blue-hover: #1D4ED8;
+            --accent-blue-soft: rgba(37, 99, 235, .16);
+            --accent-blue-glow: rgba(59, 130, 246, .25);
+            --accent-green: #22C55E;
+
+            --border-subtle: rgba(255, 255, 255, .08);
+            --border-card: rgba(255, 255, 255, .05);
+
+            --text-primary: #FFFFFF;
+            --text-secondary: #9CA3AF;
+            --text-muted: #64748B;
+
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-pill: 999px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg-page);
+            background-image:
+                radial-gradient(ellipse 900px 400px at 20% -10%, rgba(37, 99, 235, .18), transparent 60%),
+                radial-gradient(ellipse 700px 350px at 90% 0%, rgba(34, 197, 94, .10), transparent 60%);
+            background-repeat: no-repeat;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        .brand {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        /* ---------- HEADER ---------- */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 14px 28px;
+            background: rgba(5, 7, 14, .85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 17px;
+        }
+
+        .brand .logo {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent-green), #0EA5E9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: #05070E;
+        }
+.avatar{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#3b82f6;
+    color:#fff;
+    font-weight:600;
+    flex-shrink:0;
+}
+
+.avatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+        .topbar-acoes {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-left: auto;
+        }
+
+        .icone-topo {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-pill);
+            background: var(--bg-panel);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .usuario-topo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-subtle);
+            padding: 5px 14px 5px 5px;
+            border-radius: var(--radius-pill);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .usuario-topo .avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3B82F6, #1E3A8A);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* ---------- LAYOUT ---------- */
+        .layout {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 28px 80px;
+        }
+
+        .cabecalho-secao {
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .cabecalho-secao h2 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        .cabecalho-secao p {
+            margin: 10px 0 0;
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        /* ---------- TIMELINE ---------- */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 31px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-blue), var(--accent-green), transparent);
+            opacity: 0.3;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            padding-left: 80px;
+        }
+
+        .timeline-icon {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 64px;
+            height: 64px;
+            background: var(--bg-panel);
+            border: 2px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            z-index: 2;
+            transition: 0.3s;
+        }
+
+        .timeline-item.completed .timeline-icon {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+        }
+
+        .timeline-item.active .timeline-icon {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .timeline-content {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            transition: 0.3s;
+        }
+
+        .timeline-item:hover .timeline-content {
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .timeline-header h3 {
+            margin: 0;
+            font-size: 20px;
+            color: white;
+        }
+
+        .status-tag {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .tag-concluido {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--accent-green);
+        }
+
+        .tag-atual {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--accent-blue);
+        }
+
+        .tag-bloqueado {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+        }
+
+        .timeline-content p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0 0 20px;
+        }
+
+        .habilidades-trilha {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .habilidades-trilha span {
+            background: var(--bg-input);
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .progresso-trilha {
+            height: 6px;
+            background: var(--bg-input);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progresso-trilha div {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+            transition: width 0.5s ease;
+        }
+
+        .btn-trilha {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 14px;
+        }
+
+        .btn-trilha.primary {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-trilha.primary:hover {
+            background: var(--accent-blue-hover);
+        }
+
+        .btn-trilha.outline {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+        }
+
+        .btn-trilha.outline:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        /* RESPONSIVO */
+        @media (max-width: 600px) {
+            .timeline::before {
+                left: 21px;
+            }
+
+            .timeline-item {
+                padding-left: 60px;
+            }
+
+            .timeline-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
+            }
+
+            .timeline-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div class="brand">
+            <div class="logo"><i class="fa-solid fa-graduation-cap"></i></div>
+            <span>Senai Connect</span>
+        </div>
+
+        <div class="topbar-acoes">
+            <div class="icone-topo" title="Mensagens"><i class="fa-regular fa-comment"></i></div>
+            <div class="icone-topo" title="Notificações"><i class="fa-regular fa-bell"></i></div>
+            <div class="usuario-topo">
+                <div class="avatar" id="avatar"></div>
+                <span id="nomeUsuario"></span>
+            </div>
+            <nav>
+                <a href="interno.html"><i class="Inicio1"></i><span>Início</span></a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="layout">
+        <section class="cabecalho-secao">
+            <h2>🛤️ Sua Trilha: Desenvolvedor Full Stack</h2>
+            <p>Acompanhe seu progresso e veja os próximos passos para dominar o mercado.</p>
+        </section>
+
+        <main class="timeline">
+
+            <!-- Passo 1: Concluído -->
+            <div class="timeline-item completed">
+                <div class="timeline-icon">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-header">
+                        <h3>Fundamentos Web</h3>
+                        <span class="status-tag tag-concluido">Concluído</span>
+                    </div>
+                    <p>A base de tudo. Domine a estrutura e a estilização de páginas web modernas e responsivas.</p>
+                    <div class="habilidades-trilha">
+                        <span>HTML5</span>
+                        <span>CSS3</span>
+                        <span>Flexbox/Grid</span>
+                        <span>SEO Basics</span>
+                    </div>
+                    <div class="progresso-trilha">
+                        <div style="width: 100%"></div>
+                    </div>
+                    <button class="btn-trilha outline">Revisar Conteúdo</button>
+                </div>
+            </div>
+
+            <!-- Passo 2: Ativo -->
+            <div class="timeline-item active">
+                <div class="timeline-icon">
+                    <i class="fa-solid fa-code"></i>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-header">
+                        <h3>Lógica e JavaScript</h3>
+                        <span class="status-tag tag-atual">Em Andamento</span>
+                    </div>
+                    <p>Transforme páginas estáticas em aplicações interativas. O coração do desenvolvimento front-end.
+                    </p>
+                    <div class="habilidades-trilha">
+                        <span>ES6+</span>
+                        <span>DOM Manipulation</span>
+                        <span>Fetch API</span>
+                        <span>Async/Await</span>
+                    </div>
+                    <div class="progresso-trilha">
+                        <div style="width: 65%"></div>
+                    </div>
+                    <button class="btn-trilha primary">Continuar Aprendendo</button>
+                </div>
+            </div>
+
+            <!-- Passo 3: Bloqueado -->
+            <div class="timeline-item">
+                <div class="timeline-icon">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-header">
+                        <h3>Frameworks Front-end</h3>
+                        <span class="status-tag tag-bloqueado">Bloqueado</span>
+                    </div>
+                    <p>Aprenda a construir interfaces complexas e escaláveis utilizando os frameworks mais usados no
+                        mercado.</p>
+                    <div class="habilidades-trilha">
+                        <span>React.js</span>
+                        <span>State Management</span>
+                        <span>React Router</span>
+                        <span>Styled Components</span>
+                    </div>
+                    <button class="btn-trilha outline" disabled>Aguardando Requisitos</button>
+                </div>
+            </div>
+
+            <!-- Passo 4: Bloqueado -->
+            <div class="timeline-item">
+                <div class="timeline-icon">
+                    <i class="fa-solid fa-server"></i>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-header">
+                        <h3>Back-end & Banco de Dados</h3>
+                        <span class="status-tag tag-bloqueado">Próximo Passo</span>
+                    </div>
+                    <p>Entenda como funcionam os servidores, APIs e como armazenar dados de forma segura e eficiente.
+                    </p>
+                    <div class="habilidades-trilha">
+                        <span>Node.js</span>
+                        <span>Express</span>
+                        <span>SQL/NoSQL</span>
+                        <span>Auth JWT</span>
+                    </div>
+                    <button class="btn-trilha outline" disabled>Ver Detalhes</button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+    <SCript>
+         const sessao = JSON.parse(localStorage.getItem("@conexaopro:sessao"));
+
+if (sessao) {
+    document.getElementById("nomeUsuario").textContent = sessao.nome;
+
+    const avatar = document.getElementById("avatar");
+
+    if (sessao.foto) {
+        avatar.innerHTML = `<img src="${sessao.foto}" alt="Foto de perfil">`;
+    } else {
+        const iniciais = sessao.nome
+            .split(" ")
+            .map(p => p[0])
+            .join("")
+            .substring(0, 2)
+            .toUpperCase();
+
+        avatar.textContent = iniciais;
+    }
+}
+    </SCript>
+</body>
+
+</html>
