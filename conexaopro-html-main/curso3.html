@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Senai Connect · Cursos</title>
+    <link rel="stylesheet" href="#">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-page: #05070E;
+            --bg-panel: #111827;
+            --bg-input: #0B1220;
+            --bg-progress-track: #1F2937;
+
+            --accent-blue: #2563EB;
+            --accent-blue-hover: #1D4ED8;
+            --accent-blue-soft: rgba(37, 99, 235, .16);
+            --accent-blue-glow: rgba(59, 130, 246, .25);
+            --accent-green: #22C55E;
+            --accent-red: #EF4444;
+
+            --border-subtle: rgba(255, 255, 255, .08);
+            --border-card: rgba(255, 255, 255, .05);
+
+            --text-primary: #FFFFFF;
+            --text-secondary: #9CA3AF;
+            --text-muted: #64748B;
+
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 10px;
+            --radius-pill: 999px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg-page);
+            background-image:
+                radial-gradient(ellipse 900px 400px at 20% -10%, rgba(37, 99, 235, .18), transparent 60%),
+                radial-gradient(ellipse 700px 350px at 90% 0%, rgba(34, 197, 94, .10), transparent 60%);
+            background-repeat: no-repeat;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, .brand {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        /* ---------- HEADER ---------- */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 14px 28px;
+            background: rgba(5, 7, 14, .85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 17px;
+            white-space: nowrap;
+        }
+
+        .brand .logo {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent-green), #0EA5E9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: #05070E;
+        }
+
+        .busca-topo {
+            flex: 1;
+            max-width: 620px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            padding: 11px 16px;
+            border-radius: var(--radius-pill);
+            color: var(--text-muted);
+        }
+
+        .busca-topo input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            
+        }
+        .buscar-curso-input, input:focus, textarea:focus {
+    outline: none;
+}
+
+        .busca-topo input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .topbar-acoes {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-left: auto;
+        }
+
+        .icone-topo {
+            position: relative;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-pill);
+            background: var(--bg-panel);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .icone-topo .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--accent-blue);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            min-width: 16px;
+            height: 16px;
+            border-radius: var(--radius-pill);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--bg-page);
+        }
+
+        .usuario-topo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-subtle);
+            padding: 5px 14px 5px 5px;
+            border-radius: var(--radius-pill);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .usuario-topo .avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3B82F6, #1E3A8A);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .btn-sair {
+            background: none;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            padding: 9px 16px;
+            border-radius: var(--radius-pill);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-sair:hover {
+            color: var(--text-primary);
+            border-color: var(--text-secondary);
+        }
+
+        /* ---------- LAYOUT ---------- */
+        .layout {
+            display: block;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 28px 60px;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .cabecalho-secao {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .cabecalho-secao h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .cabecalho-secao p {
+            margin: 4px 0 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+.avatar{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#3b82f6;
+    color:#fff;
+    font-weight:600;
+    flex-shrink:0;
+}
+
+.avatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+        .buscar-curso {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            padding: 11px 16px;
+            border-radius: var(--radius-pill);
+            min-width: 240px;
+            color: var(--text-muted);
+        }
+
+        .buscar-curso input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .grid-cursos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .card-curso {
+            background: var(--bg-panel);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--border-card);
+            transition: .25s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-curso:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px var(--accent-blue-glow);
+            border-color: rgba(59, 130, 246, .4);
+        }
+
+        /* Thumbnail com suporte a ícone OU imagem */
+        .thumb-curso {
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            color: rgba(255, 255, 255, .9);
+            background: linear-gradient(135deg, var(--cor-thumb-1), var(--cor-thumb-2));
+            overflow: hidden;
+        }
+
+        .thumb-curso img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .card-curso h3 {
+            margin: 16px 16px 2px;
+            font-size: 15px;
+        }
+
+        .card-curso p {
+            color: var(--text-secondary);
+            margin: 0 16px 16px;
+            font-size: 13px;
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .progresso-wrap {
+            margin: 0 16px 14px;
+        }
+
+        .progresso-legenda {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .progresso {
+            height: 7px;
+            background: var(--bg-progress-track);
+            border-radius: var(--radius-pill);
+            overflow: hidden;
+        }
+
+        .progresso span {
+            display: block;
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue), #60A5FA);
+        }
+
+        .card-curso button {
+            width: calc(100% - 32px);
+            margin: 0 16px 16px;
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 11px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .card-curso button:hover {
+            background: var(--accent-blue-hover);
+        }
+
+        .card-curso.oculto {
+            display: none;
+        }
+
+        /* ---------- ACESSIBILIDADE ---------- */
+        a:focus-visible,
+        button:focus-visible,
+        input:focus-visible {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: 2px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .card-curso,
+            .card-curso:hover,
+            button {
+                transition: none !important;
+            }
+        }
+
+        @media (max-width: 780px) {
+            .busca-topo {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div class="brand">
+            <div class="logo"><i class="fa-solid fa-graduation-cap"></i></div>
+            <span>Senai Connect</span>
+        </div>
+
+        <div class="busca-topo">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="search" placeholder="Pesquisar pessoas, projetos e cursos" aria-label="Pesquisar">
+        </div>
+
+        <div class="topbar-acoes">
+            <div class="icone-topo" title="Mensagens"><i class="fa-regular fa-comment"></i></div>
+            <div class="icone-topo" title="Notificações">
+                <i class="fa-regular fa-bell"></i>
+                <span class="badge">3</span>
+            </div>
+            <div class="usuario-topo">
+                <div class="avatar" id="avatar"></div>
+                <span id="nomeUsuario"></span>
+            </div>
+            <nav>
+                <a href="interno.html"><span>Início</span></a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="layout">
+        <main>
+            <section class="cabecalho-secao">
+                <div>
+                    <h2>📚 Cursos SENAI</h2>
+                    <p>Aprenda novas tecnologias e evolua sua carreira.</p>
+                </div>
+                <div class="buscar-curso">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="search" id="buscar-curso-input" placeholder="Pesquisar curso..." aria-label="Pesquisar curso">
+                </div>
+            </section>
+
+            <section class="grid-cursos" id="grid-cursos">
+                <!-- cards gerados via JS -->
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Lista de cursos
+        // - Use "imagem" para foto real (ex: "imagens/curso1.jpg")
+        // - Se não tiver "imagem", usa o ícone do Font Awesome
+        const CURSOS = [
+            {
+                icone: "fa-industry",
+                titulo: "Instrumentista Industrial",
+                descricao: "Capacite-se em um profissional de instalações, testes, calibração e reparação de instrumentos industriais.",
+                cores: ["#1E293B", "#0F172A"],
+                imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEowdGeXyFOZ6XeiDmZkyHs4ugxkPbqjSgsYQvRsxZTg&s=10" 
+            },
+            {
+                icone: "fa-wrench",
+                titulo: "Mecânico de Manutenção",
+                descricao: "Torne-se um profissional em manutenção, montagem, inspeção e reparação de máquinas e equipamentos industriais.",
+                cores: ["#1E293B", "#0F172A"],
+                imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4ZixsDbjgtv7rYmlctFLUSvKHtTt30OVJcJ2Oz7eNLQ&s=10" 
+            },
+            {
+                icone: "fa-pizza-slice",
+                titulo: "Pizzaiolo",
+                descricao: "Aprenda a preparar massas, recheios e pizzas de alta qualidade. Desenvolva técnicas de montagem, forno e boas práticas de higiene.",
+                cores: ["#1E293B", "#0F172A"],
+                imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8PAm5N-3ihYkiRoFCPB_kAVvG4mz5tQq97bRaB0Cw3A&s=10" 
+            },
+            {
+                icone: "fa-paint-roller",
+                titulo: "Pintor de Edificações",
+                descricao: "Domine as técnicas de preparação, pintura e acabamento de paredes, fachadas e outras superfícies.",
+                cores: ["#1E293B", "#0F172A"],
+                imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfzAI568-dIY7tgA6UqLj4rnXSTlJ1vYgNFFNEHIsSQg&s=10" 
+            },
+            {
+                icone: "fa-bolt",
+                titulo: "Eletricista Industrial",
+                descricao: "Qualifique-se para instalar, realizar manutenção e solucionar falhas em sistemas elétricos industriais.",
+                cores: ["#1E293B", "#0F172A"],
+                imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBvTcHVD-SuQrSHsS1oY5wNizy-47WMe41X2kQjoswpQ&s=10" 
+            },
+            {
+                icone: "fa-boxes-stacked",
+                titulo: "Almoxarife",
+                descricao: "Especialize-se no controle de estoques, organização de materiais e realização do recebimento e a distribuição de mercadorias.",
+                cores: ["#1E293B", "#0F172A"],
+                solid: true,
+                imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzRqvxo2CAFzfR0fK2cVrrbIbpzMqWiTewKYiLiOWukQ&s=10"
+            }
+        ];
+
+        function textoBotao(progresso) {
+            
+            return "Continuar Curso";
+        }
+
+        function criarCard(curso) {
+            const card = document.createElement("div");
+            card.className = "card-curso";
+            card.dataset.titulo = curso.titulo.toLowerCase();
+
+            // Decide se usa imagem ou ícone
+            let thumbContent = "";
+            if (curso.imagem) {
+                // Tem imagem real
+                thumbContent = `<img src="${curso.imagem}" alt="${curso.titulo}">`;
+            } else {
+                // Usa ícone do Font Awesome
+                const iconeClasse = curso.solid 
+                    ? `fa-solid ${curso.icone}` 
+                    : `fa-solid ${curso.icone}`;
+                thumbContent = `<i class="${iconeClasse}"></i>`;
+            }
+
+            card.innerHTML = `
+                <div class="thumb-curso" style="--cor-thumb-1:${curso.cores[0]};--cor-thumb-2:${curso.cores[1]}">
+                    ${thumbContent}
+                </div>
+                <h3>${curso.titulo}</h3>
+                <p>${curso.descricao}</p>
+                <div class="progresso-wrap">
+                    <div class="progresso-legenda">
+                   
+                </div>
+                <button type="button">${textoBotao(curso.progresso)}</button>
+            `;
+
+            return card;
+        }
+
+        function renderizarCursos(lista) {
+            const grid = document.getElementById("grid-cursos");
+            grid.innerHTML = "";
+            lista.forEach(curso => grid.appendChild(criarCard(curso)));
+        }
+
+        function filtrarCursos(termo) {
+            const termoBusca = termo.trim().toLowerCase();
+            document.querySelectorAll(".card-curso").forEach(card => {
+                card.classList.toggle("oculto", !card.dataset.titulo.includes(termoBusca));
+            });
+        }
+
+        // Inicializa
+        renderizarCursos(CURSOS);
+
+        document.getElementById("buscar-curso-input").addEventListener("input", (e) => {
+            filtrarCursos(e.target.value);
+        });const sessao = JSON.parse(localStorage.getItem("@conexaopro:sessao"));
+
+if (sessao) {
+    document.getElementById("nomeUsuario").textContent = sessao.nome;
+
+    const avatar = document.getElementById("avatar");
+
+    if (sessao.foto) {
+        avatar.innerHTML = `<img src="${sessao.foto}" alt="Foto de perfil">`;
+    } else {
+        const iniciais = sessao.nome
+            .split(" ")
+            .map(p => p[0])
+            .join("")
+            .substring(0, 2)
+            .toUpperCase();
+
+        avatar.textContent = iniciais;
+    }
+}
+    </script>
+
+</body>
+
+</html>

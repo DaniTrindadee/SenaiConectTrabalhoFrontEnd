@@ -3,6 +3,7 @@ const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
 const { conectar } = require("./database");
 
+const path = require("path");
 const app = express();
 const PORT = 3000;
 
@@ -13,6 +14,9 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
 app.use(express.json({ limit: "50mb" })); // Para fotos em base64
+
+// ===== ARQUIVOS ESTÁTICOS (front-end) =====
+app.use(express.static(path.join(__dirname)));
 
 // Inicializar banco de dados
 const db = conectar();
